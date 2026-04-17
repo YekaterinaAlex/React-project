@@ -12,6 +12,7 @@ type Item = {
 type State = {
   searchTerm: string;
   items: Item[];
+  loading: boolean;
 };
 
 type Person = {
@@ -24,6 +25,7 @@ class App extends React.Component<Record<string, never>, State> {
   state: State = {
     searchTerm: '',
     items: [],
+    loading: false,
   };
   handleSearch = async (value: string) => {
     const trimmed = value.trim();
@@ -34,6 +36,7 @@ class App extends React.Component<Record<string, never>, State> {
     }
 
     try {
+      this.setState({ loading: true });
       const response = await fetch(
         `https://swapi.dev/api/people/?search=${trimmed}`
       );
@@ -59,6 +62,8 @@ class App extends React.Component<Record<string, never>, State> {
         searchTerm: trimmed,
         items: [],
       });
+    } finally {
+      this.setState({ loading: false });
     }
   };
   render() {
@@ -69,7 +74,11 @@ class App extends React.Component<Record<string, never>, State> {
           <Search onSearch={this.handleSearch} value={this.state.searchTerm} />
         </section>
         <section className="results-section">
-          <CardList items={this.state.items} />
+          {this.state.loading ? (
+            <p>Loading...</p>
+          ) : (
+            <CardList items={this.state.items} />
+          )}
         </section>
       </div>
     );
