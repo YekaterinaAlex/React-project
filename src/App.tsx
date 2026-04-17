@@ -13,6 +13,7 @@ type State = {
   searchTerm: string;
   items: Item[];
   loading: boolean;
+  error: string | null;
 };
 
 type Person = {
@@ -26,17 +27,23 @@ class App extends React.Component<Record<string, never>, State> {
     searchTerm: '',
     items: [],
     loading: false,
+    error: null,
   };
   handleSearch = async (value: string) => {
     const trimmed = value.trim();
 
     if (!trimmed) {
-      this.setState({ searchTerm: '', items: [] });
+      this.setState({
+        searchTerm: '',
+        items: [],
+        error: null,
+      });
       return;
     }
 
     try {
-      this.setState({ loading: true });
+      this.setState({ loading: true, error: null });
+
       const response = await fetch(
         `https://swapi.dev/api/people/?search=${trimmed}`
       );
@@ -61,6 +68,7 @@ class App extends React.Component<Record<string, never>, State> {
       this.setState({
         searchTerm: trimmed,
         items: [],
+        error: 'Something went wrong',
       });
     } finally {
       this.setState({ loading: false });
@@ -76,6 +84,8 @@ class App extends React.Component<Record<string, never>, State> {
         <section className="results-section">
           {this.state.loading ? (
             <p>Loading...</p>
+          ) : this.state.error ? (
+            <p>{this.state.error}</p>
           ) : (
             <CardList items={this.state.items} />
           )}
