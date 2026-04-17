@@ -1,11 +1,17 @@
 import React from 'react';
 
-class Card extends React.Component {
+type Props = {
+  name: string;
+  description: string;
+};
+
+class Card extends React.Component<Props> {
   render() {
+    const { name, description } = this.props;
     return (
       <div>
-        <h3> Item </h3>
-        <p>Description</p>
+        <h3>{name}</h3>
+        <p>{description}</p>
       </div>
     );
   }
