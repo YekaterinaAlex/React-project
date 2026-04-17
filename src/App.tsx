@@ -22,6 +22,10 @@ type Person = {
   gender: string;
 };
 
+type ApiResponse = {
+  results: Person[];
+};
+
 class App extends React.Component<Record<string, never>, State> {
   state: State = {
     searchTerm: '',
@@ -29,10 +33,21 @@ class App extends React.Component<Record<string, never>, State> {
     loading: false,
     error: null,
   };
+  componentDidMount() {
+    const saved = localStorage.getItem('searchTerm');
+
+    if (saved) {
+      this.setState({ searchTerm: saved });
+
+      this.handleSearch(saved);
+    }
+  }
+
   handleSearch = async (value: string) => {
     const trimmed = value.trim();
 
     if (!trimmed) {
+      localStorage.removeItem('searchTerm');
       this.setState({
         searchTerm: '',
         items: [],
@@ -43,7 +58,7 @@ class App extends React.Component<Record<string, never>, State> {
 
     try {
       this.setState({ loading: true, error: null });
-
+      localStorage.setItem('searchTerm', trimmed);
       const response = await fetch(
         `https://swapi.dev/api/people/?search=${trimmed}`
       );
@@ -52,7 +67,7 @@ class App extends React.Component<Record<string, never>, State> {
         throw new Error('Request failed');
       }
 
-      const data = await response.json();
+      const data: ApiResponse = await response.json();
 
       const items = data.results.map((person: Person) => ({
         name: person.name,
