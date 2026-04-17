@@ -1,29 +1,29 @@
 import React from 'react';
 
-type State = {
+type Props = {
   value: string;
+  onSearch: (value: string) => void;
 };
 
-class Search extends React.Component<Record<string, never>, State> {
-  constructor(props: Record<string, never>) {
-    super(props);
-    this.state = {
-      value: '',
-    };
-  }
+class Search extends React.Component<Props> {
   handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({ value: e.target.value });
+    this.props.onSearch(e.target.value);
   };
+
+  handleSearchClick = () => {
+    this.props.onSearch(this.props.value);
+  };
+
   render() {
     return (
       <div>
         <input
           type="text"
           placeholder="Search..."
-          value={this.state.value}
+          value={this.props.value}
           onChange={this.handleChange}
         />
-        <button>Search</button>
+        <button onClick={this.handleSearchClick}>Search</button>
       </div>
     );
   }
