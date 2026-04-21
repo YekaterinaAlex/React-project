@@ -3,6 +3,7 @@ import './App.css';
 import Search from './components/Search';
 import Header from './components/Header';
 import CardList from './components/CardList';
+import ErrorBoundary from './components/ErrorBoundary';
 
 type Item = {
   name: string;
@@ -14,6 +15,7 @@ type State = {
   items: Item[];
   loading: boolean;
   error: string | null;
+  hasTestError: boolean;
 };
 
 type Person = {
@@ -32,6 +34,7 @@ class App extends React.Component<Record<string, never>, State> {
     items: [],
     loading: false,
     error: null,
+    hasTestError: false,
   };
   componentDidMount() {
     const saved = localStorage.getItem('searchTerm');
@@ -42,6 +45,10 @@ class App extends React.Component<Record<string, never>, State> {
       this.handleSearch(saved);
     }
   }
+
+  handleTestError = () => {
+    this.setState({ hasTestError: true });
+  };
 
   handleSearch = async (value: string) => {
     const trimmed = value.trim();
@@ -90,22 +97,35 @@ class App extends React.Component<Record<string, never>, State> {
     }
   };
   render() {
+    if (this.state.hasTestError) {
+      throw new Error('Test error');
+    }
     return (
-      <div className="app">
-        <section className="search-section">
-          <Header />
-          <Search onSearch={this.handleSearch} value={this.state.searchTerm} />
-        </section>
-        <section className="results-section">
-          {this.state.loading ? (
-            <p>Loading...</p>
-          ) : this.state.error ? (
-            <p>{this.state.error}</p>
-          ) : (
-            <CardList items={this.state.items} />
-          )}
-        </section>
-      </div>
+      <ErrorBoundary>
+        <div className="app">
+          <section className="search-section">
+            <Header />
+            <Search
+              onSearch={this.handleSearch}
+              value={this.state.searchTerm}
+            />
+          </section>
+          <section className="results-section">
+            {this.state.loading ? (
+              <p>Loading...</p>
+            ) : this.state.error ? (
+              <p>{this.state.error}</p>
+            ) : (
+              <CardList items={this.state.items} />
+            )}
+          </section>
+          <div className="error-button-wrapper">
+            <button className="error-button" onClick={this.handleTestError}>
+              Error Button
+            </button>
+          </div>
+        </div>
+      </ErrorBoundary>
     );
   }
 }
