@@ -1,5 +1,6 @@
 import React from 'react';
 import Card from './Card';
+import './CardList.css';
 
 type Item = {
   name: string;
@@ -14,7 +15,7 @@ class CardList extends React.Component<Props> {
   render() {
     const { items } = this.props;
     return (
-      <div>
+      <div className="card-list">
         <h2>Results</h2>
         {items.length === 0 ? (
           <p>No results yet</p>

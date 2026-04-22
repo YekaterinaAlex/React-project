@@ -1,29 +1,47 @@
 import React from 'react';
+import './Search.css';
 
 type Props = {
   value: string;
   onSearch: (value: string) => void;
 };
 
-class Search extends React.Component<Props> {
+type State = {
+  inputValue: string;
+};
+
+class Search extends React.Component<Props, State> {
+  state: State = {
+    inputValue: this.props.value,
+  };
+
+  componentDidUpdate(prevProps: Props) {
+    if (prevProps.value !== this.props.value) {
+      this.setState({ inputValue: this.props.value });
+    }
+  }
+
   handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    this.props.onSearch(e.target.value);
+    this.setState({ inputValue: e.target.value });
   };
 
   handleSearchClick = () => {
-    this.props.onSearch(this.props.value);
+    this.props.onSearch(this.state.inputValue);
   };
 
   render() {
     return (
-      <div>
+      <div className="search-container">
         <input
+          className="search-input"
           type="text"
           placeholder="Search..."
-          value={this.props.value}
+          value={this.state.inputValue}
           onChange={this.handleChange}
         />
-        <button onClick={this.handleSearchClick}>Search</button>
+        <button className="search-button" onClick={this.handleSearchClick}>
+          Search
+        </button>
       </div>
     );
   }
