@@ -4,6 +4,7 @@ import Search from './components/Search';
 import Header from './components/Header';
 import CardList from './components/CardList';
 import ErrorBoundary from './components/ErrorBoundary';
+import Bug from './components/Bug';
 
 type Item = {
   name: string;
@@ -86,18 +87,16 @@ class App extends React.Component<Record<string, never>, State> {
       this.setState({
         searchTerm: trimmed,
         items: [],
-        error: 'Something went wrong',
+        error: 'Pokemon not found',
       });
     } finally {
       this.setState({ loading: false });
     }
   };
   render() {
-    if (this.state.hasTestError) {
-      throw new Error('Test error');
-    }
     return (
       <ErrorBoundary>
+        <Bug mustThrowError={this.state.hasTestError} />
         <div className="app">
           <section className="search-section">
             <Header />
