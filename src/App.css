@@ -7,11 +7,13 @@
   margin-bottom: 30px;
   padding: 20px;
   border: 1px solid black;
+  background-color: lightgray;
 }
 
 .results-section {
   padding: 20px;
   border: 1px solid black;
+  background-color: lightslategrey;
 }
 .error-button-wrapper {
   margin-top: 20px;

@@ -18,14 +18,10 @@ type State = {
   hasTestError: boolean;
 };
 
-type Person = {
+type PokemonResponse = {
   name: string;
-  height: string;
-  gender: string;
-};
-
-type ApiResponse = {
-  results: Person[];
+  height: number;
+  weight: number;
 };
 
 class App extends React.Component<Record<string, never>, State> {
@@ -67,23 +63,23 @@ class App extends React.Component<Record<string, never>, State> {
       this.setState({ loading: true, error: null });
       localStorage.setItem('searchTerm', trimmed);
       const response = await fetch(
-        `https://swapi.dev/api/people/?search=${trimmed}`
+        `https://pokeapi.co/api/v2/pokemon/${trimmed.toLowerCase()}`
       );
 
       if (!response.ok) {
         throw new Error('Request failed');
       }
 
-      const data: ApiResponse = await response.json();
+      const data: PokemonResponse = await response.json();
 
-      const items = data.results.map((person: Person) => ({
-        name: person.name,
-        description: `Height: ${person.height}, Gender: ${person.gender}`,
-      }));
+      const item = {
+        name: data.name,
+        description: `Height: ${data.height}, Weight: ${data.weight}`,
+      };
 
       this.setState({
         searchTerm: trimmed,
-        items,
+        items: [item],
       });
     } catch (error) {
       console.error(error);
