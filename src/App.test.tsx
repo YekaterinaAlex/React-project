@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from './App';
+import { MemoryRouter } from 'react-router-dom';
 
 describe('App', () => {
   afterEach(() => {
@@ -11,8 +12,23 @@ describe('App', () => {
   it('fetches and displays data', async () => {
     const user = userEvent.setup();
 
-    globalThis.fetch = vi.fn(() =>
-      Promise.resolve({
+    globalThis.fetch = vi.fn((url) => {
+      if (String(url).includes('pokemon?')) {
+        return Promise.resolve({
+          ok: true,
+          json: () =>
+            Promise.resolve({
+              results: [
+                {
+                  name: 'pikachu',
+                  url: 'https://pokeapi.co/api/v2/pokemon/25/',
+                },
+              ],
+            }),
+        });
+      }
+
+      return Promise.resolve({
         ok: true,
         json: () =>
           Promise.resolve({
@@ -20,10 +36,14 @@ describe('App', () => {
             height: 4,
             weight: 60,
           }),
-      })
-    ) as unknown as typeof fetch;
+      });
+    }) as unknown as typeof fetch;
 
-    render(<App />);
+    render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>
+    );
 
     await user.type(screen.getByPlaceholderText(/search/i), 'pikachu');
 
@@ -43,7 +63,11 @@ describe('App', () => {
         ok: false,
       })
     ) as unknown as typeof fetch;
-    render(<App />);
+    render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>
+    );
 
     await user.type(screen.getByPlaceholderText(/search/i), 'unkonown');
     await user.click(screen.getByRole('button', { name: /search/i }));

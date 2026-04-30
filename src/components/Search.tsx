@@ -1,50 +1,37 @@
 import React from 'react';
 import './Search.css';
+import { useState } from 'react';
 
 type Props = {
-  value: string;
   onSearch: (value: string) => void;
+  value: string;
 };
 
-type State = {
-  inputValue: string;
-};
+function Search({ onSearch, value }: Props) {
+  const [inputValue, setInputValue] = useState(value);
 
-class Search extends React.Component<Props, State> {
-  state: State = {
-    inputValue: this.props.value,
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
   };
 
-  componentDidUpdate(prevProps: Props) {
-    if (prevProps.value !== this.props.value) {
-      this.setState({ inputValue: this.props.value });
-    }
-  }
-
-  handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({ inputValue: e.target.value });
+  const handleSearchClick = () => {
+    onSearch(inputValue);
   };
 
-  handleSearchClick = () => {
-    this.props.onSearch(this.state.inputValue);
-  };
-
-  render() {
-    return (
-      <div className="search-container">
-        <input
-          className="search-input"
-          type="text"
-          placeholder="Search..."
-          value={this.state.inputValue}
-          onChange={this.handleChange}
-        />
-        <button className="search-button" onClick={this.handleSearchClick}>
-          Search
-        </button>
-      </div>
-    );
-  }
+  return (
+    <div className="search-container">
+      <input
+        className="search-input"
+        type="text"
+        placeholder="Search..."
+        value={inputValue}
+        onChange={handleChange}
+      />
+      <button className="search-button" onClick={handleSearchClick}>
+        Search
+      </button>
+    </div>
+  );
 }
 
 export default Search;

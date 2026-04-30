@@ -19,13 +19,19 @@ type State = {
   error: string | null;
   hasTestError: boolean;
 };
+type PokemonListItem = {
+  name: string;
+  url: string;
+};
 
-type PokemonResponse = {
+type PokemonListResponse = {
+  results: PokemonListItem[];
+};
+type PokemonDetailsResponse = {
   name: string;
   height: number;
   weight: number;
 };
-
 class App extends React.Component<Record<string, never>, State> {
   state: State = {
     searchTerm: '',
@@ -65,23 +71,40 @@ class App extends React.Component<Record<string, never>, State> {
       this.setState({ loading: true, error: null });
       localStorage.setItem('searchTerm', trimmed);
       const response = await fetch(
-        `https://pokeapi.co/api/v2/pokemon/${trimmed.toLowerCase()}`
+        'https://pokeapi.co/api/v2/pokemon?limit=1000&offset=0'
       );
 
       if (!response.ok) {
         throw new Error('Request failed');
       }
 
-      const data: PokemonResponse = await response.json();
+      const data: PokemonListResponse = await response.json();
 
-      const item = {
-        name: data.name,
-        description: `Height: ${data.height}, Weight: ${data.weight}`,
-      };
+      const filteredItems = data.results.filter((pokemon) =>
+        pokemon.name.includes(trimmed.toLowerCase())
+      );
 
+      const visibleItems = filteredItems.slice(0, 10);
+
+      const items = await Promise.all(
+        visibleItems.map(async (pokemon) => {
+          const detailsResponse = await fetch(pokemon.url);
+
+          if (!detailsResponse.ok) {
+            throw new Error('Details request failed');
+          }
+
+          const details: PokemonDetailsResponse = await detailsResponse.json();
+
+          return {
+            name: details.name,
+            description: `Height: ${details.height}, Weight: ${details.weight}`,
+          };
+        })
+      );
       this.setState({
         searchTerm: trimmed,
-        items: [item],
+        items,
       });
     } catch (error) {
       console.error(error);
