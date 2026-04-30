@@ -5,6 +5,7 @@ import Header from './components/Header';
 import CardList from './components/CardList';
 import ErrorBoundary from './components/ErrorBoundary';
 import Bug from './components/Bug';
+import { Routes, Route } from 'react-router-dom';
 
 type Item = {
   name: string;
@@ -95,32 +96,44 @@ class App extends React.Component<Record<string, never>, State> {
   };
   render() {
     return (
-      <ErrorBoundary>
-        <Bug mustThrowError={this.state.hasTestError} />
-        <div className="app">
-          <section className="search-section">
-            <Header />
-            <Search
-              onSearch={this.handleSearch}
-              value={this.state.searchTerm}
-            />
-          </section>
-          <section className="results-section">
-            {this.state.loading ? (
-              <p>Loading...</p>
-            ) : this.state.error ? (
-              <p>{this.state.error}</p>
-            ) : (
-              <CardList items={this.state.items} />
-            )}
-          </section>
-          <div className="error-button-wrapper">
-            <button className="error-button" onClick={this.handleTestError}>
-              Error Button
-            </button>
-          </div>
-        </div>
-      </ErrorBoundary>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <ErrorBoundary>
+              <Bug mustThrowError={this.state.hasTestError} />
+              <div className="app">
+                <section className="search-section">
+                  <Header />
+                  <Search
+                    onSearch={this.handleSearch}
+                    value={this.state.searchTerm}
+                  />
+                </section>
+                <section className="results-section">
+                  {this.state.loading ? (
+                    <p>Loading...</p>
+                  ) : this.state.error ? (
+                    <p>{this.state.error}</p>
+                  ) : (
+                    <CardList items={this.state.items} />
+                  )}
+                </section>
+                <div className="error-button-wrapper">
+                  <button
+                    className="error-button"
+                    onClick={this.handleTestError}
+                  >
+                    Error Button
+                  </button>
+                </div>
+              </div>
+            </ErrorBoundary>
+          }
+        />
+        <Route path="/about" element={<div>About page</div>} />
+        <Route path="/*" element={<div> Page not found</div>} />
+      </Routes>
     );
   }
 }
