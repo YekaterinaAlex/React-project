@@ -6,6 +6,9 @@ import CardList from './components/CardList';
 import ErrorBoundary from './components/ErrorBoundary';
 import Bug from './components/Bug';
 import { Routes, Route } from 'react-router-dom';
+import Pagination from './components/Pagination';
+
+const ITEMS_PER_PAGE = 10;
 
 type Item = {
   name: string;
@@ -18,6 +21,7 @@ type State = {
   loading: boolean;
   error: string | null;
   hasTestError: boolean;
+  page: number;
 };
 type PokemonListItem = {
   name: string;
@@ -39,8 +43,16 @@ class App extends React.Component<Record<string, never>, State> {
     loading: false,
     error: null,
     hasTestError: false,
+    page: this.getPageFromURL(),
   };
   componentDidMount() {
+    const params = new URLSearchParams(window.location.search);
+
+    if (!params.get('page')) {
+      params.set('page', '1');
+      window.history.replaceState({}, '', `?${params.toString()}`);
+    }
+
     const saved = localStorage.getItem('searchTerm');
 
     if (saved) {
@@ -54,8 +66,28 @@ class App extends React.Component<Record<string, never>, State> {
     this.setState({ hasTestError: true });
   };
 
+  getPageFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    return Number(params.get('page')) || 1;
+  }
+  handlePageChange = (newPage: number) => {
+    const params = new URLSearchParams(window.location.search);
+    params.set('page', String(newPage));
+
+    window.history.pushState({}, '', `?${params.toString()}`);
+
+    this.setState({ page: newPage }, () => {
+      this.handleSearch(this.state.searchTerm);
+    });
+  };
   handleSearch = async (value: string) => {
     const trimmed = value.trim();
+    const isNewSearch = trimmed !== this.state.searchTerm;
+    if (isNewSearch) {
+      const params = new URLSearchParams(window.location.search);
+      params.set('page', '1');
+      window.history.pushState({}, '', `?${params.toString()}`);
+    }
 
     if (!trimmed) {
       localStorage.removeItem('searchTerm');
@@ -84,7 +116,10 @@ class App extends React.Component<Record<string, never>, State> {
         pokemon.name.includes(trimmed.toLowerCase())
       );
 
-      const visibleItems = filteredItems.slice(0, 10);
+      const startIndex = (this.state.page - 1) * ITEMS_PER_PAGE;
+      const endIndex = startIndex + ITEMS_PER_PAGE;
+
+      const visibleItems = filteredItems.slice(startIndex, endIndex);
 
       const items = await Promise.all(
         visibleItems.map(async (pokemon) => {
@@ -105,6 +140,7 @@ class App extends React.Component<Record<string, never>, State> {
       this.setState({
         searchTerm: trimmed,
         items,
+        page: isNewSearch ? 1 : this.state.page,
       });
     } catch (error) {
       console.error(error);
@@ -139,7 +175,14 @@ class App extends React.Component<Record<string, never>, State> {
                   ) : this.state.error ? (
                     <p>{this.state.error}</p>
                   ) : (
-                    <CardList items={this.state.items} />
+                    <>
+                      <CardList items={this.state.items} />
+                      <Pagination
+                        page={this.state.page}
+                        onPageChange={this.handlePageChange}
+                        hasResults={this.state.items.length > 0}
+                      />
+                    </>
                   )}
                 </section>
                 <div className="error-button-wrapper">
