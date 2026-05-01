@@ -1,12 +1,7 @@
 import React from 'react';
 import './App.css';
-import Search from './components/Search';
-import Header from './components/Header';
-import CardList from './components/CardList/CardList';
-import ErrorBoundary from './components/ErrorBoundary';
-import Bug from './components/Bug';
+import Home from './pages/Home';
 import { Routes, Route } from 'react-router-dom';
-import Pagination from './components/Pagination';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -159,42 +154,17 @@ class App extends React.Component<Record<string, never>, State> {
         <Route
           path="/"
           element={
-            <ErrorBoundary>
-              <Bug mustThrowError={this.state.hasTestError} />
-              <div className="app">
-                <section className="search-section">
-                  <Header />
-                  <Search
-                    onSearch={this.handleSearch}
-                    value={this.state.searchTerm}
-                  />
-                </section>
-                <section className="results-section">
-                  {this.state.loading ? (
-                    <p>Loading...</p>
-                  ) : this.state.error ? (
-                    <p>{this.state.error}</p>
-                  ) : (
-                    <>
-                      <CardList items={this.state.items} />
-                      <Pagination
-                        page={this.state.page}
-                        onPageChange={this.handlePageChange}
-                        hasResults={this.state.items.length > 0}
-                      />
-                    </>
-                  )}
-                </section>
-                <div className="error-button-wrapper">
-                  <button
-                    className="error-button"
-                    onClick={this.handleTestError}
-                  >
-                    Error Button
-                  </button>
-                </div>
-              </div>
-            </ErrorBoundary>
+            <Home
+              searchTerm={this.state.searchTerm}
+              items={this.state.items}
+              loading={this.state.loading}
+              error={this.state.error}
+              page={this.state.page}
+              hasTestError={this.state.hasTestError}
+              onSearch={this.handleSearch}
+              onPageChange={this.handlePageChange}
+              onTestError={this.handleTestError}
+            />
           }
         />
         <Route path="/about" element={<div>About page</div>} />
