@@ -1,7 +1,7 @@
-import React from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import './App.css';
 import Home from './pages/Home';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useSearchParams } from 'react-router-dom';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -10,14 +10,6 @@ type Item = {
   description: string;
 };
 
-type State = {
-  searchTerm: string;
-  items: Item[];
-  loading: boolean;
-  error: string | null;
-  hasTestError: boolean;
-  page: number;
-};
 type PokemonListItem = {
   name: string;
   url: string;
@@ -31,147 +23,115 @@ type PokemonDetailsResponse = {
   height: number;
   weight: number;
 };
-class App extends React.Component<Record<string, never>, State> {
-  state: State = {
-    searchTerm: '',
-    items: [],
-    loading: false,
-    error: null,
-    hasTestError: false,
-    page: this.getPageFromURL(),
-  };
-  componentDidMount() {
-    const params = new URLSearchParams(window.location.search);
+function App() {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [items, setItems] = useState<Item[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [hasTestError, setHasTestError] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
 
-    if (!params.get('page')) {
-      params.set('page', '1');
-      window.history.replaceState({}, '', `?${params.toString()}`);
-    }
+  const page = Number(searchParams.get('page')) || 1;
 
-    const saved = localStorage.getItem('searchTerm');
-
-    if (saved) {
-      this.setState({ searchTerm: saved });
-
-      this.handleSearch(saved);
-    }
-  }
-
-  handleTestError = () => {
-    this.setState({ hasTestError: true });
+  const handleTestError = () => {
+    setHasTestError(true);
   };
 
-  getPageFromURL() {
-    const params = new URLSearchParams(window.location.search);
-    return Number(params.get('page')) || 1;
-  }
-  handlePageChange = (newPage: number) => {
-    const params = new URLSearchParams(window.location.search);
-    params.set('page', String(newPage));
-
-    window.history.pushState({}, '', `?${params.toString()}`);
-
-    this.setState({ page: newPage }, () => {
-      this.handleSearch(this.state.searchTerm);
-    });
+  const handlePageChange = (newPage: number) => {
+    setSearchParams({ page: String(newPage) });
   };
-  handleSearch = async (value: string) => {
-    const trimmed = value.trim();
-    const isNewSearch = trimmed !== this.state.searchTerm;
-    if (isNewSearch) {
-      const params = new URLSearchParams(window.location.search);
-      params.set('page', '1');
-      window.history.pushState({}, '', `?${params.toString()}`);
-    }
+  const handleUserSearch = (value: string) => {
+    setSearchParams({ page: '1' });
+    handleSearch(value);
+  };
+  const handleSearch = useCallback(
+    async (value: string) => {
+      const trimmed = value.trim();
 
-    if (!trimmed) {
-      localStorage.removeItem('searchTerm');
-      this.setState({
-        searchTerm: '',
-        items: [],
-        error: null,
-      });
-      return;
-    }
-
-    try {
-      this.setState({ loading: true, error: null });
-      localStorage.setItem('searchTerm', trimmed);
-      const response = await fetch(
-        'https://pokeapi.co/api/v2/pokemon?limit=1000&offset=0'
-      );
-
-      if (!response.ok) {
-        throw new Error('Request failed');
+      if (!trimmed) {
+        localStorage.removeItem('searchTerm');
+        setSearchTerm('');
+        setItems([]);
+        setError(null);
+        return;
       }
 
-      const data: PokemonListResponse = await response.json();
+      try {
+        setLoading(true);
+        setError(null);
+        localStorage.setItem('searchTerm', trimmed);
 
-      const filteredItems = data.results.filter((pokemon) =>
-        pokemon.name.includes(trimmed.toLowerCase())
-      );
+        const response = await fetch(
+          'https://pokeapi.co/api/v2/pokemon?limit=1000&offset=0'
+        );
 
-      const startIndex = (this.state.page - 1) * ITEMS_PER_PAGE;
-      const endIndex = startIndex + ITEMS_PER_PAGE;
+        if (!response.ok) {
+          throw new Error('Request failed');
+        }
 
-      const visibleItems = filteredItems.slice(startIndex, endIndex);
+        const data: PokemonListResponse = await response.json();
 
-      const items = await Promise.all(
-        visibleItems.map(async (pokemon) => {
-          const detailsResponse = await fetch(pokemon.url);
+        const filteredItems = data.results.filter((pokemon) =>
+          pokemon.name.includes(trimmed.toLowerCase())
+        );
 
-          if (!detailsResponse.ok) {
-            throw new Error('Details request failed');
-          }
+        const startIndex = (page - 1) * ITEMS_PER_PAGE;
+        const visibleItems = filteredItems.slice(
+          startIndex,
+          startIndex + ITEMS_PER_PAGE
+        );
 
-          const details: PokemonDetailsResponse = await detailsResponse.json();
+        const newItems = await Promise.all(
+          visibleItems.map(async (pokemon) => {
+            const res = await fetch(pokemon.url);
+            const details: PokemonDetailsResponse = await res.json();
 
-          return {
-            name: details.name,
-            description: `Height: ${details.height}, Weight: ${details.weight}`,
-          };
-        })
-      );
-      this.setState({
-        searchTerm: trimmed,
-        items,
-        page: isNewSearch ? 1 : this.state.page,
-      });
-    } catch (error) {
-      console.error(error);
-      this.setState({
-        searchTerm: trimmed,
-        items: [],
-        error: 'Pokemon not found',
-      });
-    } finally {
-      this.setState({ loading: false });
+            return {
+              name: details.name,
+              description: `Height: ${details.height}, Weight: ${details.weight}`,
+            };
+          })
+        );
+
+        setSearchTerm(trimmed);
+        setItems(newItems);
+      } catch {
+        setSearchTerm(trimmed);
+        setItems([]);
+        setError('Pokemon not found');
+      } finally {
+        setLoading(false);
+      }
+    },
+    [page]
+  );
+  useEffect(() => {
+    if (searchTerm) {
+      handleSearch(searchTerm);
     }
-  };
-  render() {
-    return (
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <Home
-              searchTerm={this.state.searchTerm}
-              items={this.state.items}
-              loading={this.state.loading}
-              error={this.state.error}
-              page={this.state.page}
-              hasTestError={this.state.hasTestError}
-              onSearch={this.handleSearch}
-              onPageChange={this.handlePageChange}
-              onTestError={this.handleTestError}
-            />
-          }
-        />
-        <Route path="/about" element={<div>About page</div>} />
-        <Route path="/*" element={<div> Page not found</div>} />
-      </Routes>
-    );
-  }
+  }, [page, searchTerm, handleSearch]);
+  return (
+    <Routes>
+      <Route
+        path="/"
+        element={
+          <Home
+            searchTerm={searchTerm}
+            items={items}
+            loading={loading}
+            error={error}
+            page={page}
+            hasTestError={hasTestError}
+            onSearch={handleUserSearch}
+            onPageChange={handlePageChange}
+            onTestError={handleTestError}
+          />
+        }
+      />
+      <Route path="/about" element={<div>About page</div>} />
+      <Route path="/*" element={<div> Page not found</div>} />
+    </Routes>
+  );
 }
 
 export default App;

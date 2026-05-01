@@ -1,4 +1,4 @@
-import './CardList.css';
+import '../CardList/CardList.css';
 
 type Props = {
   name: string;
