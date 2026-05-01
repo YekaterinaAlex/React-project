@@ -2,7 +2,7 @@ import React from 'react';
 import './App.css';
 import Search from './components/Search';
 import Header from './components/Header';
-import CardList from './components/CardList';
+import CardList from './components/CardList/CardList';
 import ErrorBoundary from './components/ErrorBoundary';
 import Bug from './components/Bug';
 import { Routes, Route } from 'react-router-dom';
