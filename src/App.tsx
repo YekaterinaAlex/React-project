@@ -30,6 +30,7 @@ function App() {
   const [error, setError] = useState<string | null>(null);
   const [hasTestError, setHasTestError] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [totalResults, setTotalResults] = useState(0);
 
   const page = Number(searchParams.get('page')) || 1;
 
@@ -74,7 +75,7 @@ function App() {
         const filteredItems = data.results.filter((pokemon) =>
           pokemon.name.includes(trimmed.toLowerCase())
         );
-
+        setTotalResults(filteredItems.length);
         const startIndex = (page - 1) * ITEMS_PER_PAGE;
         const visibleItems = filteredItems.slice(
           startIndex,
@@ -125,6 +126,7 @@ function App() {
             onSearch={handleUserSearch}
             onPageChange={handlePageChange}
             onTestError={handleTestError}
+            totalResults={totalResults}
           />
         }
       />

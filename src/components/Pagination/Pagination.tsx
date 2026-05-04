@@ -3,8 +3,9 @@ type Props = {
   page: number;
   onPageChange: (page: number) => void;
   hasResults: boolean;
+  hasNextPage: boolean;
 };
-function Pagination({ page, onPageChange, hasResults }: Props) {
+function Pagination({ page, onPageChange, hasResults, hasNextPage }: Props) {
   if (!hasResults) return null;
   return (
     <div className="pagination">
@@ -13,7 +14,9 @@ function Pagination({ page, onPageChange, hasResults }: Props) {
         Prev
       </button>
       <span>Page {page}</span>
-      <button onClick={() => onPageChange(page + 1)}>Next</button>
+      <button onClick={() => onPageChange(page + 1)} disabled={!hasNextPage}>
+        Next
+      </button>
     </div>
   );
 }

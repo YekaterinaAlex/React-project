@@ -20,6 +20,7 @@ type Props = {
   onSearch: (value: string) => void;
   onPageChange: (page: number) => void;
   onTestError: () => void;
+  totalResults: number;
 };
 
 function Home({
@@ -32,6 +33,7 @@ function Home({
   onSearch,
   onPageChange,
   onTestError,
+  totalResults,
 }: Props) {
   if (hasTestError) {
     throw new Error('Test error');
@@ -60,6 +62,7 @@ function Home({
                 page={page}
                 onPageChange={onPageChange}
                 hasResults={items.length > 0}
+                hasNextPage={page * 10 < totalResults}
               />
             </>
           )}
