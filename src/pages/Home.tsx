@@ -4,7 +4,8 @@ import CardList from '../components/CardList/CardList';
 import Search from '../components/Search/Search';
 import ErrorBoundary from '../components/ErrorBoundary';
 import Bug from '../components/Bug';
-import PokemonDetails from '../components/PokemonDetails/PokemonDetails';
+
+import { Outlet } from 'react-router-dom';
 
 type Item = {
   name: string;
@@ -76,7 +77,7 @@ function Home({
           </section>
           {selectedPokemon && (
             <section className="details-section">
-              <PokemonDetails name={selectedPokemon} />
+              <Outlet />
               <button onClick={onCloseDetails}>Close</button>
             </section>
           )}

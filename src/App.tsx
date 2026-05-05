@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import './App.css';
 import Home from './pages/Home';
 import { Routes, Route, useSearchParams } from 'react-router-dom';
+import PokemonDetails from './components/PokemonDetails/PokemonDetails';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -142,7 +143,14 @@ function App() {
             onCloseDetails={handleCloseDetails}
           />
         }
-      />
+      >
+        <Route
+          path=""
+          element={
+            selectedPokemon ? <PokemonDetails name={selectedPokemon} /> : null
+          }
+        />
+      </Route>
       <Route path="/about" element={<div>About page</div>} />
       <Route path="/*" element={<div> Page not found</div>} />
     </Routes>
