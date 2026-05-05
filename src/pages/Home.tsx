@@ -4,6 +4,7 @@ import CardList from '../components/CardList/CardList';
 import Search from '../components/Search/Search';
 import ErrorBoundary from '../components/ErrorBoundary';
 import Bug from '../components/Bug';
+import PokemonDetails from '../components/PokemonDetails/PokemonDetails';
 
 type Item = {
   name: string;
@@ -21,6 +22,8 @@ type Props = {
   onPageChange: (page: number) => void;
   onTestError: () => void;
   totalResults: number;
+  onItemClick: (name: string) => void;
+  selectedPokemon: string | null;
 };
 
 function Home({
@@ -34,6 +37,8 @@ function Home({
   onPageChange,
   onTestError,
   totalResults,
+  onItemClick,
+  selectedPokemon,
 }: Props) {
   if (hasTestError) {
     throw new Error('Test error');
@@ -48,25 +53,31 @@ function Home({
           <Header />
           <Search onSearch={onSearch} value={searchTerm} />
         </section>
+        <div className="layout">
+          <section className="results-section">
+            {loading ? (
+              <p>Loading...</p>
+            ) : error ? (
+              <p>{error}</p>
+            ) : (
+              <>
+                <CardList items={items} onItemClick={onItemClick} />
 
-        <section className="results-section">
-          {loading ? (
-            <p>Loading...</p>
-          ) : error ? (
-            <p>{error}</p>
-          ) : (
-            <>
-              <CardList items={items} />
-
-              <Pagination
-                page={page}
-                onPageChange={onPageChange}
-                hasResults={items.length > 0}
-                hasNextPage={page * 10 < totalResults}
-              />
-            </>
+                <Pagination
+                  page={page}
+                  onPageChange={onPageChange}
+                  hasResults={items.length > 0}
+                  hasNextPage={page * 10 < totalResults}
+                />
+              </>
+            )}
+          </section>
+          {selectedPokemon && (
+            <section className="details-section">
+              <PokemonDetails name={selectedPokemon} />
+            </section>
           )}
-        </section>
+        </div>
 
         <div className="error-button-wrapper">
           <button className="error-button" onClick={onTestError}>

@@ -8,9 +8,10 @@ type Item = {
 
 type Props = {
   items: Item[];
+  onItemClick: (name: string) => void;
 };
 
-function CardList({ items }: Props) {
+function CardList({ items, onItemClick }: Props) {
   return (
     <div className="card-list">
       <h2>Results</h2>
@@ -22,6 +23,7 @@ function CardList({ items }: Props) {
             key={item.name}
             name={item.name}
             description={item.description}
+            onClick={() => onItemClick(item.name)}
           />
         ))
       )}

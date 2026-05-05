@@ -33,6 +33,7 @@ function App() {
   const [totalResults, setTotalResults] = useState(0);
 
   const page = Number(searchParams.get('page')) || 1;
+  const selectedPokemon = searchParams.get('details');
 
   const handleTestError = () => {
     setHasTestError(true);
@@ -44,6 +45,12 @@ function App() {
   const handleUserSearch = (value: string) => {
     setSearchParams({ page: '1' });
     handleSearch(value);
+  };
+  const handleItemClick = (name: string) => {
+    setSearchParams({
+      page: String(page),
+      details: name,
+    });
   };
   const handleSearch = useCallback(
     async (value: string) => {
@@ -127,6 +134,8 @@ function App() {
             onPageChange={handlePageChange}
             onTestError={handleTestError}
             totalResults={totalResults}
+            onItemClick={handleItemClick}
+            selectedPokemon={selectedPokemon}
           />
         }
       />

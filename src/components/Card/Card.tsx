@@ -3,14 +3,15 @@ import '../CardList/CardList.css';
 type Props = {
   name: string;
   description: string;
+  onClick: () => void;
 };
 
-function Card({ name, description }: Props) {
+function Card({ name, description, onClick }: Props) {
   return (
-    <div className="card">
+    <button className="card" onClick={onClick}>
       <h3>{name}</h3>
       <p>{description}</p>
-    </div>
+    </button>
   );
 }
 
