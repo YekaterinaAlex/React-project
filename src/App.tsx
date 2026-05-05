@@ -52,6 +52,9 @@ function App() {
       details: name,
     });
   };
+  const handleCloseDetails = () => {
+    setSearchParams({ page: String(page) });
+  };
   const handleSearch = useCallback(
     async (value: string) => {
       const trimmed = value.trim();
@@ -136,6 +139,7 @@ function App() {
             totalResults={totalResults}
             onItemClick={handleItemClick}
             selectedPokemon={selectedPokemon}
+            onCloseDetails={handleCloseDetails}
           />
         }
       />

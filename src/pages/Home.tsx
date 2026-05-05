@@ -24,6 +24,7 @@ type Props = {
   totalResults: number;
   onItemClick: (name: string) => void;
   selectedPokemon: string | null;
+  onCloseDetails: () => void;
 };
 
 function Home({
@@ -39,6 +40,7 @@ function Home({
   totalResults,
   onItemClick,
   selectedPokemon,
+  onCloseDetails,
 }: Props) {
   if (hasTestError) {
     throw new Error('Test error');
@@ -75,6 +77,7 @@ function Home({
           {selectedPokemon && (
             <section className="details-section">
               <PokemonDetails name={selectedPokemon} />
+              <button onClick={onCloseDetails}>Close</button>
             </section>
           )}
         </div>
