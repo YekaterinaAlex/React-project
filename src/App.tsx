@@ -3,6 +3,7 @@ import './App.css';
 import Home from './pages/Home';
 import { Routes, Route, useSearchParams } from 'react-router-dom';
 import PokemonDetails from './components/PokemonDetails/PokemonDetails';
+import About from './pages/About';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -151,7 +152,7 @@ function App() {
           }
         />
       </Route>
-      <Route path="/about" element={<div>About page</div>} />
+      <Route path="/about" element={<About />} />
       <Route path="/*" element={<div> Page not found</div>} />
     </Routes>
   );

@@ -1,5 +1,13 @@
+import { Link } from 'react-router-dom';
+
 function Header() {
-  return <header>TOP CONTROLS</header>;
+  return (
+    <header>
+      <nav>
+        <Link to={'/'}>Home</Link> | <Link to={'/About'}>About</Link>
+      </nav>
+    </header>
+  );
 }
 
 export default Header;
