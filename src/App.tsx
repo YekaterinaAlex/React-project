@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import { Routes, Route, useSearchParams } from 'react-router-dom';
 import PokemonDetails from './components/PokemonDetails/PokemonDetails';
 import About from './pages/About';
+import Header from './components/Header';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -124,37 +125,40 @@ function App() {
     }
   }, [page, searchTerm, handleSearch]);
   return (
-    <Routes>
-      <Route
-        path="/"
-        element={
-          <Home
-            searchTerm={searchTerm}
-            items={items}
-            loading={loading}
-            error={error}
-            page={page}
-            hasTestError={hasTestError}
-            onSearch={handleUserSearch}
-            onPageChange={handlePageChange}
-            onTestError={handleTestError}
-            totalResults={totalResults}
-            onItemClick={handleItemClick}
-            selectedPokemon={selectedPokemon}
-            onCloseDetails={handleCloseDetails}
-          />
-        }
-      >
+    <>
+      <Header />
+      <Routes>
         <Route
-          path=""
+          path="/"
           element={
-            selectedPokemon ? <PokemonDetails name={selectedPokemon} /> : null
+            <Home
+              searchTerm={searchTerm}
+              items={items}
+              loading={loading}
+              error={error}
+              page={page}
+              hasTestError={hasTestError}
+              onSearch={handleUserSearch}
+              onPageChange={handlePageChange}
+              onTestError={handleTestError}
+              totalResults={totalResults}
+              onItemClick={handleItemClick}
+              selectedPokemon={selectedPokemon}
+              onCloseDetails={handleCloseDetails}
+            />
           }
-        />
-      </Route>
-      <Route path="/about" element={<About />} />
-      <Route path="/*" element={<div> Page not found</div>} />
-    </Routes>
+        >
+          <Route
+            path=""
+            element={
+              selectedPokemon ? <PokemonDetails name={selectedPokemon} /> : null
+            }
+          />
+        </Route>
+        <Route path="/about" element={<About />} />
+        <Route path="/*" element={<div> Page not found</div>} />
+      </Routes>
+    </>
   );
 }
 

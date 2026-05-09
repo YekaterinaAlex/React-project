@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import './PokemonDetails.css';
+
 type Props = {
   name: string;
 };

@@ -1,4 +1,3 @@
-import Header from '../components/Header';
 import Pagination from '../components/Pagination/Pagination';
 import CardList from '../components/CardList/CardList';
 import Search from '../components/Search/Search';
@@ -53,7 +52,6 @@ function Home({
 
       <div className="app">
         <section className="search-section">
-          <Header />
           <Search onSearch={onSearch} value={searchTerm} />
         </section>
         <div className="layout">

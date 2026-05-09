@@ -1,0 +1,21 @@
+.details-section h2 {
+  margin-top: 0;
+}
+
+.details-section p {
+  margin: 6px 0;
+}
+
+.details-section button {
+  margin-bottom: 12px;
+  padding: 6px 10px;
+  border: none;
+  background: #ef4444;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.details-section button:hover {
+  background: #dc2626;
+}
