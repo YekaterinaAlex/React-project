@@ -5,6 +5,7 @@ import { Routes, Route, useSearchParams } from 'react-router-dom';
 import PokemonDetails from './components/PokemonDetails/PokemonDetails';
 import About from './pages/About';
 import Header from './components/Header';
+import NotFound from './pages/NotFound';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -156,7 +157,7 @@ function App() {
           />
         </Route>
         <Route path="/about" element={<About />} />
-        <Route path="/*" element={<div> Page not found</div>} />
+        <Route path="/*" element={<NotFound />} />
       </Routes>
     </>
   );
