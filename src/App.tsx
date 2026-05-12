@@ -3,9 +3,9 @@ import './App.css';
 import Home from './pages/Home';
 import { Routes, Route, useSearchParams } from 'react-router-dom';
 import PokemonDetails from './components/PokemonDetails/PokemonDetails';
-import About from './pages/About';
+import About from './pages/About/About';
 import Header from './components/Header';
-import NotFound from './pages/NotFound';
+import NotFound from './pages/NotFound/NotFound';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -120,6 +120,13 @@ function App() {
     },
     [page]
   );
+  useEffect(() => {
+    const saved = localStorage.getItem('searchTerm');
+
+    if (saved) {
+      setSearchTerm(saved);
+    }
+  }, []);
   useEffect(() => {
     if (searchTerm) {
       handleSearch(searchTerm);

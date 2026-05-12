@@ -1,6 +1,6 @@
 import React from 'react';
 import './Search.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 type Props = {
   onSearch: (value: string) => void;
@@ -9,7 +9,9 @@ type Props = {
 
 function Search({ onSearch, value }: Props) {
   const [inputValue, setInputValue] = useState(value);
-
+  useEffect(() => {
+    setInputValue(value);
+  }, [value]);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
   };
