@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import './App.css';
-import Home from './pages/Home';
+import Home from './pages/Home/Home';
 import { Routes, Route, useSearchParams } from 'react-router-dom';
 import PokemonDetails from './components/PokemonDetails/PokemonDetails';
 import About from './pages/About/About';
