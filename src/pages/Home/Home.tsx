@@ -11,7 +11,11 @@ import CardList from '../../components/CardList';
 import Search from '../../components/Search';
 import ErrorBoundary from '../../components/ErrorBoundary';
 import Bug from '../../components/Bug';
-
+import type {
+  Item,
+  PokemonListResponse,
+  PokemonDetailsResponse,
+} from './home.type';
 import {
   AppWrapper,
   SearchSection,
@@ -21,28 +25,9 @@ import {
   ErrorButton,
   DetailsSection,
 } from './Home.styled';
+import { fetchData } from '../../utils/fetchData';
 
 const ITEMS_PER_PAGE = 10;
-
-type Item = {
-  name: string;
-  description: string;
-};
-
-type PokemonListItem = {
-  name: string;
-  url: string;
-};
-
-type PokemonListResponse = {
-  results: PokemonListItem[];
-};
-
-type PokemonDetailsResponse = {
-  name: string;
-  height: number;
-  weight: number;
-};
 
 function Home() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -100,15 +85,9 @@ function Home() {
 
         localStorage.setItem('searchTerm', trimmed);
 
-        const response = await fetch(
+        const data = await fetchData<PokemonListResponse>(
           'https://pokeapi.co/api/v2/pokemon?limit=1000&offset=0'
         );
-
-        if (!response.ok) {
-          throw new Error('Request failed');
-        }
-
-        const data: PokemonListResponse = await response.json();
 
         const filteredItems = data.results.filter((pokemon) =>
           pokemon.name.includes(trimmed.toLowerCase())

@@ -9,6 +9,7 @@ import {
   StyledTitle,
   StyledText,
 } from './PokemonDetails.styled';
+import { fetchData } from '../../utils/fetchData';
 
 function PokemonDetails() {
   const { name } = useParams();
@@ -25,15 +26,9 @@ function PokemonDetails() {
         setLoading(true);
         setDetails(null);
 
-        const response = await fetch(
+        const data = await fetchData<PokemonDetailsData>(
           `https://pokeapi.co/api/v2/pokemon/${name}`
         );
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch details');
-        }
-
-        const data: PokemonDetailsData = await response.json();
 
         setDetails(data);
       } catch (error) {
