@@ -1,5 +1,5 @@
 import React from 'react';
-import './Search.css';
+import styled from 'styled-components';
 import { useState, useEffect } from 'react';
 
 type Props = {
@@ -21,19 +21,39 @@ function Search({ onSearch, value }: Props) {
   };
 
   return (
-    <div className="search-container">
-      <input
-        className="search-input"
+    <SearchContainer>
+      <SearchInput
         type="text"
         placeholder="Search..."
         value={inputValue}
         onChange={handleChange}
       />
-      <button className="search-button" onClick={handleSearchClick}>
-        Search
-      </button>
-    </div>
+
+      <SearchButton onClick={handleSearchClick}>Search</SearchButton>
+    </SearchContainer>
   );
 }
 
 export default Search;
+
+const SearchContainer = styled.div`
+  display: flex;
+  gap: 8px;
+`;
+const SearchInput = styled.input`
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+`;
+const SearchButton = styled.button`
+  padding: 8px 14px;
+  border: none;
+  background-color: #1677ff;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+    &:hover {
+    background-color: #f5b800;
+  }
+}`;
