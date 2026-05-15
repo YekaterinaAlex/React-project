@@ -1,23 +1,30 @@
-import React from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
+
+import { debounce } from '../../utils/debounce';
+
 import {
   StyledSearchContainer,
   StyledSearchButton,
   StyledSearchInput,
 } from './Search.styled';
-import { useState, useEffect } from 'react';
+
 import type { SearchProps } from './search.type';
 
 function Search({ onSearch, value }: SearchProps) {
   const [inputValue, setInputValue] = useState(value);
+
   useEffect(() => {
     setInputValue(value);
   }, [value]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
   };
 
+  const debouncedSearch = useMemo(() => debounce(onSearch, 500), [onSearch]);
+
   const handleSearchClick = () => {
-    onSearch(inputValue);
+    debouncedSearch(inputValue);
   };
 
   return (

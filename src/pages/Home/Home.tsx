@@ -165,11 +165,11 @@ function Home() {
 
         <Layout>
           <ResultSection>
-            {loading ? (
-              <p>Loading...</p>
-            ) : error ? (
-              <p>{error}</p>
-            ) : (
+            {loading && <p>Loading...</p>}
+
+            {!loading && error && <p>{error}</p>}
+
+            {!loading && !error && (
               <>
                 <CardList items={items} onItemClick={handleItemClick} />
 
