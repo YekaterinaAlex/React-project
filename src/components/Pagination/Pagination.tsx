@@ -1,4 +1,4 @@
-import { StyledPagination, StyledButton } from './pagination.styled';
+import { StyledPagination, StyledButton } from './Pagination.styled';
 import type { PaginationProps } from './pagination.type';
 
 function Pagination({
