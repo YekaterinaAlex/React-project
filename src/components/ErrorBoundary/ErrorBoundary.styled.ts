@@ -1,4 +1,6 @@
-.fallback {
+import styled from 'styled-components';
+
+export const StyledFallback = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -6,13 +8,14 @@
   flex-direction: column;
   text-align: center;
   gap: 10px;
-}
-.fallback h2 {
+`;
+
+export const StyledTitle = styled.h2`
   margin: 0;
   color: red;
-}
+`;
 
-.fallback p {
+export const StyledText = styled.p`
   margin: 0;
   color: black;
-}
+`;

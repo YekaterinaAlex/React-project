@@ -1,23 +1,30 @@
-import './Pagination.css';
-type Props = {
-  page: number;
-  onPageChange: (page: number) => void;
-  hasResults: boolean;
-  hasNextPage: boolean;
-};
-function Pagination({ page, onPageChange, hasResults, hasNextPage }: Props) {
+import { StyledPagination, StyledButton } from './pagination.styled';
+import type { PaginationProps } from './pagination.type';
+
+function Pagination({
+  page,
+  onPageChange,
+  hasResults,
+  hasNextPage,
+}: PaginationProps) {
   if (!hasResults) return null;
   return (
-    <div className="pagination">
-      <button onClick={() => onPageChange(page - 1)} disabled={page === 1}>
+    <StyledPagination>
+      <StyledButton
+        onClick={() => onPageChange(page - 1)}
+        disabled={page === 1}
+      >
         {' '}
         Prev
-      </button>
+      </StyledButton>
       <span>Page {page}</span>
-      <button onClick={() => onPageChange(page + 1)} disabled={!hasNextPage}>
+      <StyledButton
+        onClick={() => onPageChange(page + 1)}
+        disabled={!hasNextPage}
+      >
         Next
-      </button>
-    </div>
+      </StyledButton>
+    </StyledPagination>
   );
 }
 

@@ -1,17 +1,16 @@
-import './Card.css';
+import type { CardProps } from './card.type';
+import {
+  StyledCard,
+  StyledCardHeader,
+  StyledCardDescription,
+} from './Card.styled';
 
-type Props = {
-  name: string;
-  description: string;
-  onClick: () => void;
-};
-
-function Card({ name, description, onClick }: Props) {
+function Card({ name, description, onClick }: CardProps) {
   return (
-    <button className="card" onClick={onClick}>
-      <h3>{name}</h3>
-      <p>{description}</p>
-    </button>
+    <StyledCard onClick={onClick}>
+      <StyledCardHeader>{name}</StyledCardHeader>
+      <StyledCardDescription>{description}</StyledCardDescription>
+    </StyledCard>
   );
 }
 

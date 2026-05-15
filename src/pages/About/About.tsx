@@ -1,17 +1,20 @@
-import './About.css';
+import { StyledAboutPage, StyledLink } from './About.styled';
+
 function About() {
   return (
-    <div className="about-page">
+    <StyledAboutPage>
       <h1>About page</h1>
-      <p>Author: Yekaterina Alexeyenko </p>
-      <a
+
+      <p>Author: Yekaterina Alexeyenko</p>
+
+      <StyledLink
         href="https://rs.school/courses/reactjs"
         target="_blank"
         rel="noreferrer"
       >
         RS School React Course
-      </a>
-    </div>
+      </StyledLink>
+    </StyledAboutPage>
   );
 }
 export default About;

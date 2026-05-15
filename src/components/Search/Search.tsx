@@ -1,13 +1,13 @@
 import React from 'react';
-import styled from 'styled-components';
+import {
+  StyledSearchContainer,
+  StyledSearchButton,
+  StyledSearchInput,
+} from './Search.styled';
 import { useState, useEffect } from 'react';
+import type { SearchProps } from './search.type';
 
-type Props = {
-  onSearch: (value: string) => void;
-  value: string;
-};
-
-function Search({ onSearch, value }: Props) {
+function Search({ onSearch, value }: SearchProps) {
   const [inputValue, setInputValue] = useState(value);
   useEffect(() => {
     setInputValue(value);
@@ -21,39 +21,19 @@ function Search({ onSearch, value }: Props) {
   };
 
   return (
-    <SearchContainer>
-      <SearchInput
+    <StyledSearchContainer>
+      <StyledSearchInput
         type="text"
         placeholder="Search..."
         value={inputValue}
         onChange={handleChange}
       />
 
-      <SearchButton onClick={handleSearchClick}>Search</SearchButton>
-    </SearchContainer>
+      <StyledSearchButton onClick={handleSearchClick}>
+        Search
+      </StyledSearchButton>
+    </StyledSearchContainer>
   );
 }
 
 export default Search;
-
-const SearchContainer = styled.div`
-  display: flex;
-  gap: 8px;
-`;
-const SearchInput = styled.input`
-  flex: 1;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-`;
-const SearchButton = styled.button`
-  padding: 8px 14px;
-  border: none;
-  background-color: #1677ff;
-  color: white;
-  border-radius: 4px;
-  cursor: pointer;
-    &:hover {
-    background-color: #f5b800;
-  }
-}`;

@@ -1,19 +1,10 @@
-import Card from '../Card/Card';
-import './CardList.css';
+import Card from '../Card';
+import { StyledCardList } from './CardList.styled';
+import type { CardListProps } from './cardList.type';
 
-type Item = {
-  name: string;
-  description: string;
-};
-
-type Props = {
-  items: Item[];
-  onItemClick: (name: string) => void;
-};
-
-function CardList({ items, onItemClick }: Props) {
+function CardList({ items, onItemClick }: CardListProps) {
   return (
-    <div className="card-list">
+    <StyledCardList>
       <h2>Results</h2>
       {items.length === 0 ? (
         <p>No results yet</p>
@@ -27,7 +18,7 @@ function CardList({ items, onItemClick }: Props) {
           />
         ))
       )}
-    </div>
+    </StyledCardList>
   );
 }
 

@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-import Pagination from '../../components/Pagination/Pagination';
-import CardList from '../../components/CardList/CardList';
-import Search from '../../components/Search/Search';
+import Pagination from '../../components/Pagination';
+import CardList from '../../components/CardList';
+import Search from '../../components/Search';
 import ErrorBoundary from '../../components/ErrorBoundary';
 import Bug from '../../components/Bug';
-import PokemonDetails from '../../components/PokemonDetails/PokemonDetails';
+import PokemonDetails from '../../components/PokemonDetails';
 import styled from 'styled-components';
 
 const ITEMS_PER_PAGE = 10;

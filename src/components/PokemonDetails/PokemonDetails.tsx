@@ -1,17 +1,12 @@
 import { useEffect, useState } from 'react';
-import './PokemonDetails.css';
+import { StyledContainer, StyledTitle, StyledText } from './Pokemon.styled';
+import type {
+  PokemonDetailsProps,
+  PokemonDetailsData,
+} from './pokemonDetails.type';
 
-type Props = {
-  name: string;
-};
-type PokemonDetails = {
-  name: string;
-  height: number;
-  weight: number;
-};
-
-function PokemonDetails({ name }: Props) {
-  const [details, setDetails] = useState<PokemonDetails | null>(null);
+function PokemonDetails({ name }: PokemonDetailsProps) {
+  const [details, setDetails] = useState<PokemonDetailsData | null>(null);
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     const fetchDetails = async () => {
@@ -24,7 +19,7 @@ function PokemonDetails({ name }: Props) {
         if (!response.ok) {
           throw new Error('Failed to fetch details');
         }
-        const data: PokemonDetails = await response.json();
+        const data: PokemonDetailsData = await response.json();
         setDetails(data);
       } catch (error) {
         console.error(error);
@@ -41,11 +36,14 @@ function PokemonDetails({ name }: Props) {
   }
   if (!details) return null;
   return (
-    <div>
-      <h2>{details.name}</h2>
-      <p>Height: {details.height}</p>
-      <p>Weight: {details.weight}</p>
-    </div>
+    <StyledContainer>
+      <StyledTitle>{details.name}</StyledTitle>
+
+      <StyledText>Height: {details.height}</StyledText>
+
+      <StyledText>Weight: {details.weight}</StyledText>
+    </StyledContainer>
   );
 }
+
 export default PokemonDetails;
