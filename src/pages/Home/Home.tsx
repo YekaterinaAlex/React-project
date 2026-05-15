@@ -1,13 +1,26 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import {
+  Outlet,
+  useNavigate,
+  useSearchParams,
+  useLocation,
+} from 'react-router-dom';
 
 import Pagination from '../../components/Pagination';
 import CardList from '../../components/CardList';
 import Search from '../../components/Search';
 import ErrorBoundary from '../../components/ErrorBoundary';
 import Bug from '../../components/Bug';
-import PokemonDetails from '../../components/PokemonDetails';
-import styled from 'styled-components';
+
+import {
+  AppWrapper,
+  SearchSection,
+  ResultSection,
+  Layout,
+  ErrorButtonWrapper,
+  ErrorButton,
+  DetailsSection,
+} from './Home.styled';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -41,26 +54,29 @@ function Home() {
 
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const page = Number(searchParams.get('page')) || 1;
-  const selectedPokemon = searchParams.get('details');
+  const navigate = useNavigate();
 
+  const location = useLocation();
+
+  const showDetails = location.pathname.includes('/pokemon/');
+
+  const page = Number(searchParams.get('page')) || 1;
+
+  const handleCloseDetails = () => {
+    navigate(`/?page=${page}`);
+  };
   const handleTestError = () => {
     setHasTestError(true);
   };
 
   const handlePageChange = (newPage: number) => {
-    setSearchParams({ page: String(newPage) });
-  };
-
-  const handleItemClick = (name: string) => {
     setSearchParams({
-      page: String(page),
-      details: name,
+      page: String(newPage),
     });
   };
 
-  const handleCloseDetails = () => {
-    setSearchParams({ page: String(page) });
+  const handleItemClick = (name: string) => {
+    navigate(`/pokemon/${name}?page=${page}`);
   };
 
   const handleSearch = useCallback(
@@ -69,10 +85,12 @@ function Home() {
 
       if (!trimmed) {
         localStorage.removeItem('searchTerm');
+
         setSearchTerm('');
         setItems([]);
         setError(null);
         setTotalResults(0);
+
         return;
       }
 
@@ -132,7 +150,10 @@ function Home() {
   );
 
   const handleUserSearch = (value: string) => {
-    setSearchParams({ page: '1' });
+    setSearchParams({
+      page: '1',
+    });
+
     handleSearch(value);
   };
 
@@ -162,6 +183,7 @@ function Home() {
         <SearchSection>
           <Search onSearch={handleUserSearch} value={searchTerm} />
         </SearchSection>
+
         <Layout>
           <ResultSection>
             {loading ? (
@@ -182,11 +204,11 @@ function Home() {
             )}
           </ResultSection>
 
-          {selectedPokemon && (
+          {showDetails && (
             <DetailsSection>
-              <PokemonDetails name={selectedPokemon} />
+              <Outlet />
 
-              <button onClick={handleCloseDetails}>Close</button>
+              <ErrorButton onClick={handleCloseDetails}>Close</ErrorButton>
             </DetailsSection>
           )}
         </Layout>
@@ -200,46 +222,3 @@ function Home() {
 }
 
 export default Home;
-
-const AppWrapper = styled.div`
-  padding: 20px;
-  font-family: 'Courier New', Courier, monospace;
-`;
-const SearchSection = styled.section`
-  margin-bottom: 30px;
-  padding: 20px;
-  border: 1px solid black;
-  background-color: lightgray;
-`;
-const ResultSection = styled.section`
-  padding: 20px;
-  border: 1px solid black;
-  background-color: lightslategrey;
-  min-height: 200px;
-  flex: 1;
-`;
-const Layout = styled.div`
-  display: flex;
-  gap: 20px;
-`;
-const ErrorButtonWrapper = styled.div`
-  margin-top: 20px;
-  display: flex;
-  justify-content: flex-end;
-`;
-const ErrorButton = styled.button`
-  padding: 8px 14px;
-  background-color: #ff4d4f;
-  border: none;
-  color: white;
-  cursor: pointer;
-  border-radius: 4px;
-&:hover {
-    background-color: #f5b800;
-`;
-const DetailsSection = styled.section`
- width: 300px;
-  border-left: 1px solid lightgrey;
-  padding: 10px;
-}
-  `;
