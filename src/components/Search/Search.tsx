@@ -1,6 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
-
-import { debounce } from '../../utils/debounce';
+import React, { useState, useEffect } from 'react';
 
 import {
   StyledSearchContainer,
@@ -21,10 +19,8 @@ function Search({ onSearch, value }: SearchProps) {
     setInputValue(e.target.value);
   };
 
-  const debouncedSearch = useMemo(() => debounce(onSearch, 500), [onSearch]);
-
   const handleSearchClick = () => {
-    debouncedSearch(inputValue);
+    onSearch(inputValue);
   };
 
   return (
