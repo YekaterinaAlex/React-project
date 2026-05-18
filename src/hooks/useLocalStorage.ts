@@ -1,19 +1,22 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 function useLocalStorage(key: string, initialValue: string) {
   const [storedValue, setStoredValue] = useState(() => {
     return localStorage.getItem(key) ?? initialValue;
   });
 
-  const setValue = (value: string) => {
-    localStorage.setItem(key, value);
-    setStoredValue(value);
-  };
+  const setValue = useCallback(
+    (value: string) => {
+      localStorage.setItem(key, value);
+      setStoredValue(value);
+    },
+    [key]
+  );
 
-  const removeValue = () => {
+  const removeValue = useCallback(() => {
     localStorage.removeItem(key);
     setStoredValue(initialValue);
-  };
+  }, [key, initialValue]);
 
   return {
     storedValue,
@@ -21,4 +24,5 @@ function useLocalStorage(key: string, initialValue: string) {
     removeValue,
   };
 }
+
 export default useLocalStorage;
