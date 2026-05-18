@@ -6,6 +6,9 @@ import {
   useLocation,
 } from 'react-router-dom';
 
+import { toggleItem } from '../../store/selectedItemsSlice';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+
 import Pagination from '../../components/Pagination';
 import CardList from '../../components/CardList';
 import Search from '../../components/Search';
@@ -37,6 +40,13 @@ function Home() {
     setValue: setSearchTerm,
     removeValue: removeSearchTerm,
   } = useLocalStorage('searchTerm', '');
+
+  const dispatch = useAppDispatch();
+  const selectedItems = useAppSelector((state) => state.selectedItems.items);
+  const selectedItemNames = selectedItems.map((item) => item.name);
+  const handleToggleSelect = (item: Item) => {
+    dispatch(toggleItem(item));
+  };
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -160,7 +170,12 @@ function Home() {
 
             {!loading && !error && (
               <>
-                <CardList items={items} onItemClick={handleItemClick} />
+                <CardList
+                  items={items}
+                  onItemClick={handleItemClick}
+                  selectedItemNames={selectedItemNames}
+                  onToggleSelect={handleToggleSelect}
+                />
 
                 <Pagination
                   page={page}

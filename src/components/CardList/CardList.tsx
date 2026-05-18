@@ -2,7 +2,12 @@ import Card from '../Card';
 import { StyledCardList } from './CardList.styled';
 import type { CardListProps } from './cardList.type';
 
-function CardList({ items, onItemClick }: CardListProps) {
+function CardList({
+  items,
+  onItemClick,
+  selectedItemNames,
+  onToggleSelect,
+}: CardListProps) {
   return (
     <StyledCardList>
       <h2>Results</h2>
@@ -15,6 +20,8 @@ function CardList({ items, onItemClick }: CardListProps) {
             name={item.name}
             description={item.description}
             onClick={() => onItemClick(item.name)}
+            isSelected={selectedItemNames.includes(item.name)}
+            onToggleSelect={() => onToggleSelect(item)}
           />
         ))
       )}
