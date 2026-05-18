@@ -11,11 +11,7 @@ import CardList from '../../components/CardList';
 import Search from '../../components/Search';
 import ErrorBoundary from '../../components/ErrorBoundary';
 import Bug from '../../components/Bug';
-import type {
-  Item,
-  PokemonListResponse,
-  PokemonDetailsResponse,
-} from './home.type';
+import type { Item, PokemonListResponse } from './home.type';
 import {
   AppWrapper,
   SearchSection,
@@ -102,18 +98,10 @@ function Home() {
           startIndex + ITEMS_PER_PAGE
         );
 
-        const newItems = await Promise.all(
-          visibleItems.map(async (pokemon) => {
-            const res = await fetch(pokemon.url);
-
-            const details: PokemonDetailsResponse = await res.json();
-
-            return {
-              name: details.name,
-              description: `Height: ${details.height}, Weight: ${details.weight}`,
-            };
-          })
-        );
+        const newItems = visibleItems.map((pokemon) => ({
+          name: pokemon.name,
+          description: '',
+        }));
 
         setSearchTerm(trimmed);
         setItems(newItems);
