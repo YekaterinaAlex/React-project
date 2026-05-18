@@ -49,13 +49,19 @@ describe('App', () => {
     renderApp();
 
     await user.type(screen.getByPlaceholderText(/search/i), 'pikachu');
-
     await user.click(screen.getByRole('button', { name: /search/i }));
 
     const name = await screen.findByText(/pikachu/i);
     expect(name).toBeInTheDocument();
 
-    expect(screen.getByText(/height: 4, weight: 60/i)).toBeInTheDocument();
+    expect(
+      screen.queryByText(/height: 4, weight: 60/i)
+    ).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: /pikachu/i }));
+
+    expect(await screen.findByText(/height: 4/i)).toBeInTheDocument();
+    expect(screen.getByText(/weight: 60/i)).toBeInTheDocument();
   });
 
   it('shows error message when fetch fails', async () => {
