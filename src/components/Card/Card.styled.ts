@@ -16,6 +16,7 @@ export const StyledCard = styled.button`
     transform: translateY(-1px);
   }
 `;
+
 export const StyledCardHeader = styled.h3`
   margin: 0 0 6px;
 `;

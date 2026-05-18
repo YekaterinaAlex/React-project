@@ -34,7 +34,21 @@ function Home() {
   const [totalResults, setTotalResults] = useState(0);
 
   const [searchParams, setSearchParams] = useSearchParams();
+  useEffect(() => {
+    const saved = localStorage.getItem('searchTerm');
 
+    if (saved) {
+      setSearchTerm(saved);
+    }
+  }, []);
+
+  useEffect(() => {
+    const currentPage = searchParams.get('page');
+
+    if (!currentPage) {
+      setSearchParams({ page: '1' });
+    }
+  }, [searchParams, setSearchParams]);
   const navigate = useNavigate();
 
   const location = useLocation();
@@ -123,14 +137,6 @@ function Home() {
 
     handleSearch(value);
   };
-
-  useEffect(() => {
-    const saved = localStorage.getItem('searchTerm');
-
-    if (saved) {
-      setSearchTerm(saved);
-    }
-  }, []);
 
   useEffect(() => {
     if (searchTerm) {
