@@ -38,8 +38,9 @@ export const ErrorButton = styled.button`
   color: white;
   cursor: pointer;
   border-radius: 4px;
-&:hover {
+  &:hover {
     background-color: #f5b800;
+  }
 `;
 
 export const DetailsSection = styled.section`

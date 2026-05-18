@@ -22,25 +22,23 @@ import {
   DetailsSection,
 } from './Home.styled';
 import { fetchData } from '../../utils/fetchData';
-
+import useLocalStorage from '../../hooks/useLocalStorage';
 const ITEMS_PER_PAGE = 10;
 
 function Home() {
-  const [searchTerm, setSearchTerm] = useState('');
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasTestError, setHasTestError] = useState(false);
   const [totalResults, setTotalResults] = useState(0);
 
-  const [searchParams, setSearchParams] = useSearchParams();
-  useEffect(() => {
-    const saved = localStorage.getItem('searchTerm');
+  const {
+    storedValue: searchTerm,
+    setValue: setSearchTerm,
+    removeValue: removeSearchTerm,
+  } = useLocalStorage('searchTerm', '');
 
-    if (saved) {
-      setSearchTerm(saved);
-    }
-  }, []);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
     const currentPage = searchParams.get('page');
@@ -79,9 +77,8 @@ function Home() {
       const trimmed = value.trim();
 
       if (!trimmed) {
-        localStorage.removeItem('searchTerm');
+        removeSearchTerm();
 
-        setSearchTerm('');
         setItems([]);
         setError(null);
         setTotalResults(0);
@@ -92,8 +89,6 @@ function Home() {
       try {
         setLoading(true);
         setError(null);
-
-        localStorage.setItem('searchTerm', trimmed);
 
         const data = await fetchData<PokemonListResponse>(
           'https://pokeapi.co/api/v2/pokemon?limit=1000&offset=0'
@@ -127,7 +122,7 @@ function Home() {
         setLoading(false);
       }
     },
-    [page]
+    [page, setSearchTerm, removeSearchTerm]
   );
 
   const handleUserSearch = (value: string) => {
