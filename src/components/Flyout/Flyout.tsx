@@ -1,4 +1,5 @@
 import type { FlyoutProps } from './flyout.type';
+import { StyledFlyout, StyledFlyoutButton } from './Flyout.styled';
 
 function Flyout({ items, onUnselect, onDownload }: FlyoutProps) {
   if (items.length === 0) {
@@ -6,13 +7,13 @@ function Flyout({ items, onUnselect, onDownload }: FlyoutProps) {
   }
 
   return (
-    <div>
+    <StyledFlyout>
       <p>{items.length} items selected</p>
 
-      <button onClick={onUnselect}>Unselect All</button>
+      <StyledFlyoutButton onClick={onUnselect}>Unselect All</StyledFlyoutButton>
 
-      <button onClick={onDownload}>Download</button>
-    </div>
+      <StyledFlyoutButton onClick={onDownload}>Download</StyledFlyoutButton>
+    </StyledFlyout>
   );
 }
 

@@ -6,7 +6,7 @@ import {
   useLocation,
 } from 'react-router-dom';
 
-import { toggleItem } from '../../store/selectedItemsSlice';
+import { toggleItem, clearSelectedItems } from '../../store/selectedItemsSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
 import Pagination from '../../components/Pagination';
@@ -14,6 +14,9 @@ import CardList from '../../components/CardList';
 import Search from '../../components/Search';
 import ErrorBoundary from '../../components/ErrorBoundary';
 import Bug from '../../components/Bug';
+import Flyout from '../../components/Flyout';
+import { downloadCSV } from '../../utils/downloadCSV';
+
 import type { Item, PokemonListResponse } from './home.type';
 import {
   AppWrapper,
@@ -48,6 +51,13 @@ function Home() {
     dispatch(toggleItem(item));
   };
 
+  const handleUnselectAll = () => {
+    dispatch(clearSelectedItems());
+  };
+
+  const handleDownload = () => {
+    downloadCSV(selectedItems);
+  };
   const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
@@ -195,7 +205,11 @@ function Home() {
             </DetailsSection>
           )}
         </Layout>
-
+        <Flyout
+          items={selectedItems}
+          onUnselect={handleUnselectAll}
+          onDownload={handleDownload}
+        />
         <ErrorButtonWrapper>
           <ErrorButton onClick={handleTestError}>Error Button</ErrorButton>
         </ErrorButtonWrapper>

@@ -1,13 +1,18 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { Provider } from 'react-redux';
+import { store } from './store/store';
+
 import App from './App';
 import { MemoryRouter } from 'react-router-dom';
 
 const renderApp = () =>
   render(
-    <MemoryRouter initialEntries={['/?page=1']}>
-      <App />
-    </MemoryRouter>
+    <Provider store={store}>
+      <MemoryRouter initialEntries={['/?page=1']}>
+        <App />
+      </MemoryRouter>
+    </Provider>
   );
 
 describe('App', () => {
