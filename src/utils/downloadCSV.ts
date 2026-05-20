@@ -14,7 +14,7 @@ export const downloadCSV = (items: Item[]) => {
       row.map((value) => `"${value.replaceAll('"', '""')}"`).join(',')
     )
     .join('\n');
-  console.log(fullCSV);
+
   const blob = new Blob([fullCSV], { type: 'text/csv;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');

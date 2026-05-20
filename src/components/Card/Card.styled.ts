@@ -8,7 +8,8 @@ export const StyledCard = styled.button`
   border-radius: 10px;
   padding: 12px;
   margin-bottom: 10px;
-  background: white;
+  background-color: var(--card-background);
+  color: var(--text-color);
   cursor: pointer;
   transition: all 0.2s ease;
   &:hover {

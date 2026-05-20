@@ -20,3 +20,15 @@ export const StyledLink = styled(Link)`
     text-decoration: underline;
   }
 `;
+
+export const StyledButton = styled.button`
+  padding: 8px 14px;
+  border: none;
+  background-color: #1677ff;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  &:hover {
+    background-color: #f5b800;
+  }
+`;

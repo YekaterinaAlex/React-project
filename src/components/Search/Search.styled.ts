@@ -10,6 +10,8 @@ export const StyledSearchInput = styled.input`
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
+  background: var(--input-background);
+  color: var(--text-color);
 `;
 
 export const StyledSearchButton = styled.button`
