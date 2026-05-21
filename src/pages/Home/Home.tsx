@@ -38,11 +38,10 @@ function Home() {
   const [hasTestError, setHasTestError] = useState(false);
   const [totalResults, setTotalResults] = useState(0);
 
-  const {
-    storedValue: searchTerm,
-    setValue: setSearchTerm,
-    removeValue: removeSearchTerm,
-  } = useLocalStorage('searchTerm', '');
+  const { storedValue: searchTerm, setValue: setSearchTerm } = useLocalStorage(
+    'searchTerm',
+    ''
+  );
 
   const dispatch = useAppDispatch();
   const selectedItems = useAppSelector((state) => state.selectedItems.items);
@@ -96,16 +95,6 @@ function Home() {
     async (value: string) => {
       const trimmed = value.trim();
 
-      if (!trimmed) {
-        removeSearchTerm();
-
-        setItems([]);
-        setError(null);
-        setTotalResults(0);
-
-        return;
-      }
-
       try {
         setLoading(true);
         setError(null);
@@ -114,9 +103,13 @@ function Home() {
           'https://pokeapi.co/api/v2/pokemon?limit=1000&offset=0'
         );
 
-        const filteredItems = data.results.filter((pokemon) =>
-          pokemon.name.includes(trimmed.toLowerCase())
-        );
+        const normalizedSearch = trimmed.toLowerCase();
+
+        const filteredItems = normalizedSearch
+          ? data.results.filter((pokemon) =>
+              pokemon.name.includes(normalizedSearch)
+            )
+          : data.results;
 
         setTotalResults(filteredItems.length);
 
@@ -142,7 +135,7 @@ function Home() {
         setLoading(false);
       }
     },
-    [page, setSearchTerm, removeSearchTerm]
+    [page, setSearchTerm]
   );
 
   const handleUserSearch = (value: string) => {
@@ -154,9 +147,7 @@ function Home() {
   };
 
   useEffect(() => {
-    if (searchTerm) {
-      handleSearch(searchTerm);
-    }
+    handleSearch(searchTerm);
   }, [page, searchTerm, handleSearch]);
 
   if (hasTestError) {
