@@ -5,13 +5,16 @@ import { store } from './store/store';
 
 import App from './App';
 import { MemoryRouter } from 'react-router-dom';
+import { ThemeProvider } from './context/ThemeProvider';
 
 const renderApp = () =>
   render(
     <Provider store={store}>
-      <MemoryRouter initialEntries={['/?page=1']}>
-        <App />
-      </MemoryRouter>
+      <ThemeProvider>
+        <MemoryRouter initialEntries={['/?page=1']}>
+          <App />
+        </MemoryRouter>
+      </ThemeProvider>
     </Provider>
   );
 

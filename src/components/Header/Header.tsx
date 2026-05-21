@@ -15,7 +15,7 @@ function Header() {
         <StyledLink to="/">Home</StyledLink>
 
         <StyledLink to="/about">About</StyledLink>
-        <StyledButton onClick={toggleTheme}>Theme: {theme}</StyledButton>
+        <StyledButton onClick={toggleTheme}> {theme}</StyledButton>
       </StyledNav>
     </StyledHeader>
   );
