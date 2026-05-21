@@ -33,13 +33,13 @@ export const ErrorButtonWrapper = styled.div`
 
 export const ErrorButton = styled.button`
   padding: 8px 14px;
-  background-color: #ff4d4f;
+  background-color: var(--button-background);
   border: none;
   color: white;
   cursor: pointer;
   border-radius: 4px;
   &:hover {
-    background-color: #f5b800;
+    background-color: var(--buttonhover-background);
   }
 `;
 

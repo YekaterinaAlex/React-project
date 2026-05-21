@@ -13,7 +13,7 @@ export const StyledCard = styled.button`
   cursor: pointer;
   transition: all 0.2s ease;
   &:hover {
-    background: #f3f4f6;
+    background: var(--buttonhover-background);
     transform: translateY(-1px);
   }
 `;

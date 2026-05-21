@@ -3,6 +3,9 @@
   --text-color: black;
   --card-background: #f3f3f3;
   --input-background: white;
+  --button-background: #1677ff;
+  --buttonhover-background: orange;
+  --cardhover-background: white;
 }
 
 [data-theme='dark'] {
@@ -10,6 +13,9 @@
   --text-color: white;
   --card-background: #2b2b2b;
   --input-background: #2b2b2b;
+  --button-background: #3a3a3a;
+  --buttonhover-background: #646cff;
+  --cardhover-background: grey;
 }
 
 body {

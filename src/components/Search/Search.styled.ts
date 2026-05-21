@@ -17,11 +17,11 @@ export const StyledSearchInput = styled.input`
 export const StyledSearchButton = styled.button`
   padding: 8px 14px;
   border: none;
-  background-color: #1677ff;
+  background-color: var(--button-background);
   color: white;
   border-radius: 4px;
   cursor: pointer;
   &:hover {
-    background-color: #f5b800;
+    background-color: var(--buttonhover-background);
   }
 `;
