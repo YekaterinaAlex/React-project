@@ -23,6 +23,12 @@ function Search({ onSearch, value }: SearchProps) {
     onSearch(inputValue);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      onSearch(inputValue);
+    }
+  };
+
   return (
     <StyledSearchContainer>
       <StyledSearchInput
@@ -30,6 +36,7 @@ function Search({ onSearch, value }: SearchProps) {
         placeholder="Search..."
         value={inputValue}
         onChange={handleChange}
+        onKeyDown={handleKeyDown}
       />
 
       <StyledSearchButton onClick={handleSearchClick}>
