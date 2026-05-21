@@ -50,6 +50,9 @@ describe('App', () => {
             name: 'pikachu',
             height: 4,
             weight: 60,
+            sprites: {
+              front_default: 'https://example.com/pikachu.png',
+            },
           }),
       });
     }) as unknown as typeof fetch;
@@ -70,6 +73,7 @@ describe('App', () => {
 
     expect(await screen.findByText(/height: 4/i)).toBeInTheDocument();
     expect(screen.getByText(/weight: 60/i)).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: /pikachu/i })).toBeInTheDocument();
   });
 
   it('shows error message when fetch fails', async () => {
@@ -126,6 +130,9 @@ describe('App', () => {
             name: 'pikachu',
             height: 4,
             weight: 60,
+            sprites: {
+              front_default: 'https://example.com/pikachu.png',
+            },
           }),
       });
     }) as unknown as typeof fetch;
@@ -159,6 +166,9 @@ describe('App', () => {
             name: 'pikachu',
             height: 4,
             weight: 60,
+            sprites: {
+              front_default: 'https://example.com/pikachu.png',
+            },
           }),
       });
     }) as unknown as typeof fetch;
