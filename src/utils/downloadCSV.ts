@@ -1,11 +1,11 @@
 import type { Item } from '../pages/Home/home.type';
 
 export const downloadCSV = (items: Item[]) => {
-  const header = ['name', 'description', 'URL'];
+  const header = ['name', 'URL'];
 
   const rows = items.map((item) => [
     item.name,
-    item.description,
+
     `https://pokeapi.co/api/v2/pokemon/${item.name}`,
   ]);
 
