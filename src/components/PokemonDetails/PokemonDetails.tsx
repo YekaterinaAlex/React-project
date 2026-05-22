@@ -51,7 +51,9 @@ function PokemonDetails() {
   return (
     <StyledContainer>
       <StyledTitle>{details.name}</StyledTitle>
-
+      {details.sprites.front_default && (
+        <img src={details.sprites.front_default} alt={details.name} />
+      )}
       <StyledText>Height: {details.height}</StyledText>
 
       <StyledText>Weight: {details.weight}</StyledText>

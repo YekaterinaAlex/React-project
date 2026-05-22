@@ -3,21 +3,34 @@ import styled from 'styled-components';
 export const AppWrapper = styled.div`
   padding: 20px;
   font-family: 'Courier New', Courier, monospace;
+
+  background-color: ${({ theme }) => theme.background};
+
+  color: ${({ theme }) => theme.text};
+
+  min-height: 100vh;
 `;
 
 export const SearchSection = styled.section`
   margin-bottom: 30px;
   padding: 20px;
-  border: 1px solid black;
-  background-color: lightgray;
+
+  border-radius: 10px;
+  border: 1px solid ${({ theme }) => theme.border};
+
+  background-color: ${({ theme }) => theme.cardBackground};
 `;
 
 export const ResultSection = styled.section`
-  padding: 20px;
-  border: 1px solid black;
-  background-color: lightslategrey;
-  min-height: 200px;
   flex: 1;
+  min-height: 200px;
+
+  padding: 20px;
+
+  border-radius: 10px;
+  border: 1px solid ${({ theme }) => theme.border};
+
+  background-color: ${({ theme }) => theme.cardBackground};
 `;
 
 export const Layout = styled.div`
@@ -27,25 +40,37 @@ export const Layout = styled.div`
 
 export const ErrorButtonWrapper = styled.div`
   margin-top: 20px;
+
   display: flex;
   justify-content: flex-end;
 `;
 
 export const ErrorButton = styled.button`
   padding: 8px 14px;
-  background-color: #ff4d4f;
+
   border: none;
-  color: white;
+  border-radius: 6px;
+
+  background-color: ${({ theme }) => theme.buttonBackground};
+
+  color: ${({ theme }) => theme.text};
+
   cursor: pointer;
-  border-radius: 4px;
+
+  transition: background-color 0.2s ease;
+
   &:hover {
-    background-color: #f5b800;
+    background-color: ${({ theme }) => theme.buttonHoverBackground};
   }
 `;
 
 export const DetailsSection = styled.section`
- width: 300px;
-  border-left: 1px solid lightgrey;
-  padding: 10px;
-}
-  `;
+  width: 300px;
+
+  padding: 16px;
+
+  border-radius: 10px;
+  border: 1px solid ${({ theme }) => theme.border};
+
+  background-color: ${({ theme }) => theme.cardBackground};
+`;

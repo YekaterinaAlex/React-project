@@ -1,13 +1,21 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { Provider } from 'react-redux';
+import { store } from './store/store';
+
 import App from './App';
 import { MemoryRouter } from 'react-router-dom';
+import { ThemeProvider } from './context/ThemeProvider';
 
 const renderApp = () =>
   render(
-    <MemoryRouter initialEntries={['/?page=1']}>
-      <App />
-    </MemoryRouter>
+    <Provider store={store}>
+      <ThemeProvider>
+        <MemoryRouter initialEntries={['/?page=1']}>
+          <App />
+        </MemoryRouter>
+      </ThemeProvider>
+    </Provider>
   );
 
 describe('App', () => {
@@ -42,6 +50,9 @@ describe('App', () => {
             name: 'pikachu',
             height: 4,
             weight: 60,
+            sprites: {
+              front_default: 'https://example.com/pikachu.png',
+            },
           }),
       });
     }) as unknown as typeof fetch;
@@ -62,6 +73,7 @@ describe('App', () => {
 
     expect(await screen.findByText(/height: 4/i)).toBeInTheDocument();
     expect(screen.getByText(/weight: 60/i)).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: /pikachu/i })).toBeInTheDocument();
   });
 
   it('shows error message when fetch fails', async () => {
@@ -118,6 +130,9 @@ describe('App', () => {
             name: 'pikachu',
             height: 4,
             weight: 60,
+            sprites: {
+              front_default: 'https://example.com/pikachu.png',
+            },
           }),
       });
     }) as unknown as typeof fetch;
@@ -151,6 +166,9 @@ describe('App', () => {
             name: 'pikachu',
             height: 4,
             weight: 60,
+            sprites: {
+              front_default: 'https://example.com/pikachu.png',
+            },
           }),
       });
     }) as unknown as typeof fetch;

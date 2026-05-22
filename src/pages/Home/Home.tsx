@@ -6,12 +6,23 @@ import {
   useLocation,
 } from 'react-router-dom';
 
+import { toggleItem, clearSelectedItems } from '../../store/selectedItemsSlice';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+
 import Pagination from '../../components/Pagination';
 import CardList from '../../components/CardList';
 import Search from '../../components/Search';
 import ErrorBoundary from '../../components/ErrorBoundary';
 import Bug from '../../components/Bug';
-import type { Item, PokemonListResponse } from './home.type';
+import Flyout from '../../components/Flyout';
+import { downloadCSV } from '../../utils/downloadCSV';
+
+import type {
+  Item,
+  PokemonListResponse,
+  PokemonDetailsResponse,
+} from './home.type';
+
 import {
   AppWrapper,
   SearchSection,
@@ -30,14 +41,27 @@ function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasTestError, setHasTestError] = useState(false);
-  const [totalResults, setTotalResults] = useState(0);
 
-  const {
-    storedValue: searchTerm,
-    setValue: setSearchTerm,
-    removeValue: removeSearchTerm,
-  } = useLocalStorage('searchTerm', '');
+  const [hasNextPage, setHasNextPage] = useState(false);
+  const { storedValue: searchTerm, setValue: setSearchTerm } = useLocalStorage(
+    'searchTerm',
+    ''
+  );
 
+  const dispatch = useAppDispatch();
+  const selectedItems = useAppSelector((state) => state.selectedItems.items);
+  const selectedItemNames = selectedItems.map((item) => item.name);
+  const handleToggleSelect = (item: Item) => {
+    dispatch(toggleItem(item));
+  };
+
+  const handleUnselectAll = () => {
+    dispatch(clearSelectedItems());
+  };
+
+  const handleDownload = () => {
+    downloadCSV(selectedItems);
+  };
   const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
@@ -74,55 +98,56 @@ function Home() {
 
   const handleSearch = useCallback(
     async (value: string) => {
-      const trimmed = value.trim();
-
-      if (!trimmed) {
-        removeSearchTerm();
-
-        setItems([]);
-        setError(null);
-        setTotalResults(0);
-
-        return;
-      }
+      const trimmed = value.trim().toLowerCase();
 
       try {
         setLoading(true);
         setError(null);
 
+        if (trimmed) {
+          const pokemon = await fetchData<PokemonDetailsResponse>(
+            `https://pokeapi.co/api/v2/pokemon/${trimmed}`
+          );
+
+          setHasNextPage(false);
+
+          setSearchTerm(trimmed);
+
+          setItems([
+            {
+              name: pokemon.name,
+              description: '',
+            },
+          ]);
+
+          return;
+        }
+
+        const offset = (page - 1) * ITEMS_PER_PAGE;
+
         const data = await fetchData<PokemonListResponse>(
-          'https://pokeapi.co/api/v2/pokemon?limit=1000&offset=0'
+          `https://pokeapi.co/api/v2/pokemon?offset=${offset}&limit=${ITEMS_PER_PAGE}`
         );
 
-        const filteredItems = data.results.filter((pokemon) =>
-          pokemon.name.includes(trimmed.toLowerCase())
-        );
+        setHasNextPage(Boolean(data.next));
 
-        setTotalResults(filteredItems.length);
-
-        const startIndex = (page - 1) * ITEMS_PER_PAGE;
-
-        const visibleItems = filteredItems.slice(
-          startIndex,
-          startIndex + ITEMS_PER_PAGE
-        );
-
-        const newItems = visibleItems.map((pokemon) => ({
+        const newItems = data.results.map((pokemon) => ({
           name: pokemon.name,
           description: '',
         }));
 
-        setSearchTerm(trimmed);
+        setSearchTerm('');
         setItems(newItems);
       } catch {
-        setSearchTerm(trimmed);
         setItems([]);
+        setHasNextPage(false);
+
         setError('Pokemon not found');
       } finally {
         setLoading(false);
       }
     },
-    [page, setSearchTerm, removeSearchTerm]
+    [page, setSearchTerm]
   );
 
   const handleUserSearch = (value: string) => {
@@ -134,9 +159,7 @@ function Home() {
   };
 
   useEffect(() => {
-    if (searchTerm) {
-      handleSearch(searchTerm);
-    }
+    handleSearch(searchTerm);
   }, [page, searchTerm, handleSearch]);
 
   if (hasTestError) {
@@ -160,13 +183,18 @@ function Home() {
 
             {!loading && !error && (
               <>
-                <CardList items={items} onItemClick={handleItemClick} />
+                <CardList
+                  items={items}
+                  onItemClick={handleItemClick}
+                  selectedItemNames={selectedItemNames}
+                  onToggleSelect={handleToggleSelect}
+                />
 
                 <Pagination
                   page={page}
                   onPageChange={handlePageChange}
                   hasResults={items.length > 0}
-                  hasNextPage={page * 10 < totalResults}
+                  hasNextPage={hasNextPage}
                 />
               </>
             )}
@@ -180,7 +208,11 @@ function Home() {
             </DetailsSection>
           )}
         </Layout>
-
+        <Flyout
+          items={selectedItems}
+          onUnselect={handleUnselectAll}
+          onDownload={handleDownload}
+        />
         <ErrorButtonWrapper>
           <ErrorButton onClick={handleTestError}>Error Button</ErrorButton>
         </ErrorButtonWrapper>

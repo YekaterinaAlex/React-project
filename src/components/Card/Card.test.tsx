@@ -8,9 +8,12 @@ describe('Card', () => {
         name="pikachu"
         description="Height: 4, Weight: 60"
         onClick={() => undefined}
+        isSelected={false}
+        onToggleSelect={() => undefined}
       />
     );
     expect(screen.getByText('pikachu')).toBeInTheDocument();
     expect(screen.getByText('Height: 4, Weight: 60')).toBeInTheDocument();
+    expect(screen.getByRole('checkbox')).not.toBeChecked();
   });
 });
