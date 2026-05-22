@@ -1,6 +1,7 @@
 import {
   StyledHeader,
   StyledNav,
+  StyledLinks,
   StyledLink,
   StyledButton,
 } from './Header.styled';
@@ -12,9 +13,11 @@ function Header() {
   return (
     <StyledHeader>
       <StyledNav>
-        <StyledLink to="/">Home</StyledLink>
+        <StyledLinks>
+          <StyledLink to="/">Home</StyledLink>
 
-        <StyledLink to="/about">About</StyledLink>
+          <StyledLink to="/about">About</StyledLink>
+        </StyledLinks>
         <StyledButton onClick={toggleTheme}> {theme}</StyledButton>
       </StyledNav>
     </StyledHeader>

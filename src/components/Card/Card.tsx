@@ -3,6 +3,7 @@ import {
   StyledCard,
   StyledCardHeader,
   StyledCardDescription,
+  StyledCardCheckbox,
 } from './Card.styled';
 
 function Card({
@@ -14,7 +15,7 @@ function Card({
 }: CardProps) {
   return (
     <StyledCard onClick={onClick}>
-      <input
+      <StyledCardCheckbox
         type="checkbox"
         checked={isSelected}
         onClick={(event) => event.stopPropagation()}

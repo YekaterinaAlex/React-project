@@ -1,7 +1,9 @@
 import styled from 'styled-components';
 
 export const StyledCard = styled.button`
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 12px;
   width: 100%;
   text-align: left;
   border: 1px solid #e5e7eb;
@@ -25,4 +27,12 @@ export const StyledCardHeader = styled.h3`
 export const StyledCardDescription = styled.p`
   margin: 0;
   color: #6b7280;
+`;
+
+export const StyledCardCheckbox = styled.input`
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #646cff;
+  flex-shrink: 0;
 `;

@@ -8,6 +8,14 @@ export const StyledHeader = styled.header`
 
 export const StyledNav = styled.nav`
   display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+`;
+
+export const StyledLinks = styled.div`
+  display: flex;
+  align-items: center;
   gap: 16px;
 `;
 
