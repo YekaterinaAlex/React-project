@@ -6,7 +6,7 @@ import Flyout from './Flyout';
 describe('Flyout', () => {
   it('does not render when no items are selected', () => {
     render(<Flyout items={[]} onUnselect={vi.fn()} onDownload={vi.fn()} />);
-    expect(screen.queryByText(/items selected/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/item selected/i)).not.toBeInTheDocument();
   });
 
   it('renders selected count and calls actions', async () => {
@@ -21,7 +21,7 @@ describe('Flyout', () => {
         onDownload={onDownload}
       />
     );
-    expect(screen.getByText(/1 items selected/i)).toBeInTheDocument();
+    expect(screen.getByText(/1 item selected/i)).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: /unselect all/i }));
     expect(onUnselect).toHaveBeenCalled();
