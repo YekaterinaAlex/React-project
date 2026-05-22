@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 
+import { lightTheme, darkTheme } from '../theme/theme';
+import { ThemeProvider as StyledThemeProvider } from 'styled-components';
 import { ThemeContext, type Theme } from './ThemeContext';
 
 interface ThemeProviderProps {
@@ -20,7 +22,9 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      {children}
+      <StyledThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
+        {children}
+      </StyledThemeProvider>
     </ThemeContext.Provider>
   );
 }

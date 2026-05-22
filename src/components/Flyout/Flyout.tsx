@@ -5,10 +5,13 @@ function Flyout({ items, onUnselect, onDownload }: FlyoutProps) {
   if (items.length === 0) {
     return null;
   }
+  const count = items.length;
 
   return (
     <StyledFlyout>
-      <p>{items.length} items selected</p>
+      <p>
+        {count} {count === 1 ? 'item' : 'items'} selected.
+      </p>
 
       <StyledFlyoutButton onClick={onUnselect}>Unselect All</StyledFlyoutButton>
 
