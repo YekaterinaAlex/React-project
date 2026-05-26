@@ -1,11 +1,12 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
-import { store } from './store/store';
+import { MemoryRouter } from 'react-router-dom';
 
 import App from './App';
-import { MemoryRouter } from 'react-router-dom';
+import { store } from './store/store';
 import { ThemeProvider } from './context/ThemeProvider';
+import { pokemonApi } from './store/api/pokemonApi';
 
 const renderApp = () =>
   render(
@@ -18,56 +19,64 @@ const renderApp = () =>
     </Provider>
   );
 
+const createJsonResponse = (data: unknown, status = 200) =>
+  Promise.resolve(
+    new Response(JSON.stringify(data), {
+      status,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+  );
+
+const mockSuccessfulFetch = () => {
+  globalThis.fetch = vi.fn((url) => {
+    const requestUrl = String(url);
+
+    if (requestUrl.includes('/pokemon?offset=')) {
+      return createJsonResponse({
+        count: 1,
+        next: null,
+        previous: null,
+        results: [
+          {
+            name: 'pikachu',
+            url: 'https://pokeapi.co/api/v2/pokemon/25/',
+          },
+        ],
+      });
+    }
+
+    return createJsonResponse({
+      name: 'pikachu',
+      height: 4,
+      weight: 60,
+      sprites: {
+        front_default: 'https://example.com/pikachu.png',
+      },
+    });
+  }) as unknown as typeof fetch;
+};
+
 describe('App', () => {
   afterEach(() => {
     vi.restoreAllMocks();
     localStorage.clear();
+    store.dispatch(pokemonApi.util.resetApiState());
   });
 
   it('fetches and displays data', async () => {
     const user = userEvent.setup();
 
-    globalThis.fetch = vi.fn((url) => {
-      if (String(url).includes('pokemon?')) {
-        return Promise.resolve({
-          ok: true,
-          json: () =>
-            Promise.resolve({
-              results: [
-                {
-                  name: 'pikachu',
-                  url: 'https://pokeapi.co/api/v2/pokemon/25/',
-                },
-              ],
-            }),
-        });
-      }
-
-      return Promise.resolve({
-        ok: true,
-        json: () =>
-          Promise.resolve({
-            name: 'pikachu',
-            height: 4,
-            weight: 60,
-            sprites: {
-              front_default: 'https://example.com/pikachu.png',
-            },
-          }),
-      });
-    }) as unknown as typeof fetch;
+    mockSuccessfulFetch();
 
     renderApp();
 
     await user.type(screen.getByPlaceholderText(/search/i), 'pikachu');
     await user.click(screen.getByRole('button', { name: /search/i }));
 
-    const name = await screen.findByText(/pikachu/i);
-    expect(name).toBeInTheDocument();
-
-    expect(
-      screen.queryByText(/height: 4, weight: 60/i)
-    ).not.toBeInTheDocument();
+    expect(await screen.findByText(/pikachu/i)).toBeInTheDocument();
+    expect(screen.queryByText(/height: 4/i)).not.toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: /pikachu/i }));
 
@@ -79,14 +88,8 @@ describe('App', () => {
   it('shows error message when fetch fails', async () => {
     const user = userEvent.setup();
 
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => undefined);
-
     globalThis.fetch = vi.fn(() =>
-      Promise.resolve({
-        ok: false,
-      })
+      Promise.resolve(new Response(null, { status: 404 }))
     ) as unknown as typeof fetch;
 
     renderApp();
@@ -95,89 +98,60 @@ describe('App', () => {
     await user.click(screen.getByRole('button', { name: /search/i }));
 
     expect(await screen.findByText(/pokemon not found/i)).toBeInTheDocument();
-
-    consoleErrorMock.mockRestore();
   });
 
   it('shows empty search input when local storage is empty', () => {
+    mockSuccessfulFetch();
+
     renderApp();
+
     expect(screen.getByPlaceholderText(/search/i)).toHaveValue('');
   });
 
   it('reads saved search term from localStorage on mount', async () => {
     localStorage.setItem('searchTerm', 'pikachu');
 
-    globalThis.fetch = vi.fn((url) => {
-      if (String(url).includes('pokemon?')) {
-        return Promise.resolve({
-          ok: true,
-          json: () =>
-            Promise.resolve({
-              results: [
-                {
-                  name: 'pikachu',
-                  url: 'https://pokeapi.co/api/v2/pokemon/25/',
-                },
-              ],
-            }),
-        });
-      }
-
-      return Promise.resolve({
-        ok: true,
-        json: () =>
-          Promise.resolve({
-            name: 'pikachu',
-            height: 4,
-            weight: 60,
-            sprites: {
-              front_default: 'https://example.com/pikachu.png',
-            },
-          }),
-      });
-    }) as unknown as typeof fetch;
+    mockSuccessfulFetch();
 
     renderApp();
 
     expect(await screen.findByDisplayValue('pikachu')).toBeInTheDocument();
+    expect(await screen.findByText(/pikachu/i)).toBeInTheDocument();
   });
+
   it('writes search term to localStorage after user searches', async () => {
     const user = userEvent.setup();
 
-    globalThis.fetch = vi.fn((url) => {
-      if (String(url).includes('pokemon?')) {
-        return Promise.resolve({
-          ok: true,
-          json: () =>
-            Promise.resolve({
-              results: [
-                {
-                  name: 'pikachu',
-                  url: 'https://pokeapi.co/api/v2/pokemon/25/',
-                },
-              ],
-            }),
-        });
-      }
-      return Promise.resolve({
-        ok: true,
-        json: () =>
-          Promise.resolve({
-            name: 'pikachu',
-            height: 4,
-            weight: 60,
-            sprites: {
-              front_default: 'https://example.com/pikachu.png',
-            },
-          }),
-      });
-    }) as unknown as typeof fetch;
+    mockSuccessfulFetch();
 
     renderApp();
 
     await user.type(screen.getByPlaceholderText(/search/i), 'pikachu');
     await user.click(screen.getByRole('button', { name: /search/i }));
 
-    expect(localStorage.getItem('searchTerm')).toBe('pikachu');
+    await waitFor(() => {
+      expect(localStorage.getItem('searchTerm')).toBe('pikachu');
+    });
+  });
+
+  it('refetches data when refresh button is clicked', async () => {
+    const user = userEvent.setup();
+
+    mockSuccessfulFetch();
+
+    renderApp();
+
+    await user.type(screen.getByPlaceholderText(/search/i), 'pikachu');
+    await user.click(screen.getByRole('button', { name: /search/i }));
+
+    await screen.findByText(/pikachu/i);
+
+    const previousCalls = vi.mocked(globalThis.fetch).mock.calls.length;
+
+    await user.click(screen.getByRole('button', { name: /refresh/i }));
+
+    await waitFor(() => {
+      expect(globalThis.fetch).toHaveBeenCalledTimes(previousCalls + 1);
+    });
   });
 });
