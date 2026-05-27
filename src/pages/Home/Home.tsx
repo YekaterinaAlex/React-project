@@ -92,6 +92,7 @@ function Home() {
   } = useGetPokemonByNameQuery(trimmedSearch, {
     skip: !trimmedSearch,
   });
+
   const handleRefresh = () => {
     if (trimmedSearch) {
       refetchPokemon();
@@ -115,6 +116,7 @@ function Home() {
         name: pokemon.name,
         description: '',
       })) ?? []);
+
   const hasNextPage = Boolean(listData?.next);
   const handleCloseDetails = () => {
     navigate(`/?page=${page}`);

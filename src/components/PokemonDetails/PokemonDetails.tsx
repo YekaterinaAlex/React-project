@@ -4,6 +4,7 @@ import {
   StyledContainer,
   StyledTitle,
   StyledText,
+  StyledRefreshButton,
 } from './PokemonDetails.styled';
 
 import { useGetPokemonByNameQuery } from '../../store/api/pokemonApi';
@@ -34,7 +35,9 @@ function PokemonDetails() {
 
   return (
     <StyledContainer>
-      <button onClick={() => refetch()}>Refresh details</button>
+      <StyledRefreshButton onClick={() => refetch()}>
+        Refresh details
+      </StyledRefreshButton>
 
       <StyledTitle>{details.name}</StyledTitle>
 
