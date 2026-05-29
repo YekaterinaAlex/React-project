@@ -7,6 +7,8 @@ import {
   StyledRefreshButton,
 } from './PokemonDetails.styled';
 
+import Spinner from '../Spinner';
+
 import { useGetPokemonByNameQuery } from '../../store/api/pokemonApi';
 
 function PokemonDetails() {
@@ -22,7 +24,7 @@ function PokemonDetails() {
   });
 
   if (isLoading) {
-    return <StyledText>Loading details...</StyledText>;
+    return <Spinner />;
   }
 
   if (error) {

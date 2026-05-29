@@ -16,6 +16,7 @@ import ErrorBoundary from '../../components/ErrorBoundary';
 import Bug from '../../components/Bug';
 import Flyout from '../../components/Flyout';
 import { downloadCSV } from '../../utils/downloadCSV';
+import Spinner from '../../components/Spinner';
 
 import type { Item } from './home.type';
 
@@ -159,7 +160,7 @@ function Home() {
         <Layout>
           <ResultSection>
             <ErrorButton onClick={handleRefresh}>Refresh</ErrorButton>
-            {loading && <p>Loading...</p>}
+            {loading && <Spinner />}
 
             {!loading && error && <p>Pokemon not found</p>}
 
