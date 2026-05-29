@@ -154,11 +154,11 @@ function Home() {
       <AppWrapper>
         <SearchSection>
           <Search onSearch={handleUserSearch} value={searchTerm} />
-          <ErrorButton onClick={handleRefresh}>Refresh</ErrorButton>
         </SearchSection>
 
         <Layout>
           <ResultSection>
+            <ErrorButton onClick={handleRefresh}>Refresh</ErrorButton>
             {loading && <p>Loading...</p>}
 
             {!loading && error && <p>Pokemon not found</p>}
