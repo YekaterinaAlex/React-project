@@ -64,7 +64,35 @@ describe('App', () => {
     localStorage.clear();
     store.dispatch(pokemonApi.util.resetApiState());
   });
+  it('shows loading indicator while query is loading', async () => {
+    globalThis.fetch = vi.fn(
+      () =>
+        new Promise((resolve) => {
+          setTimeout(() => {
+            resolve(
+              new Response(
+                JSON.stringify({
+                  count: 0,
+                  next: null,
+                  previous: null,
+                  results: [],
+                }),
+                {
+                  status: 200,
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                }
+              )
+            );
+          }, 100);
+        })
+    ) as unknown as typeof fetch;
 
+    renderApp();
+
+    expect(await screen.findByTestId('spinner')).toBeInTheDocument();
+  });
   it('fetches and displays data', async () => {
     const user = userEvent.setup();
 

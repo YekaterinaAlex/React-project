@@ -24,7 +24,7 @@ function PokemonDetails() {
   });
 
   if (isLoading) {
-    return <Spinner />;
+    return <Spinner data-testid="spinner" />;
   }
 
   if (error) {

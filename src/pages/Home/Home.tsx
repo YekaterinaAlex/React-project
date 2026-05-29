@@ -160,7 +160,7 @@ function Home() {
         <Layout>
           <ResultSection>
             <ErrorButton onClick={handleRefresh}>Refresh</ErrorButton>
-            {loading && <Spinner />}
+            {loading && <Spinner data-testid="spinner" />}
 
             {!loading && error && <p>Pokemon not found</p>}
 
