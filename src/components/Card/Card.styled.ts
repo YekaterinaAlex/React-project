@@ -25,11 +25,6 @@ export const StyledCardHeader = styled.h3`
   margin: 0 0 6px;
 `;
 
-export const StyledCardDescription = styled.p`
-  margin: 0;
-  color: ${({ theme }) => theme.descriptionText};
-`;
-
 export const StyledCardCheckbox = styled.input`
   width: 18px;
   height: 18px;

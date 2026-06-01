@@ -109,13 +109,11 @@ function Home() {
       ? [
           {
             name: pokemonData.name,
-            description: '',
           },
         ]
       : []
     : (listData?.results?.map((pokemon) => ({
         name: pokemon.name,
-        description: '',
       })) ?? []);
 
   const hasNextPage = Boolean(listData?.next);

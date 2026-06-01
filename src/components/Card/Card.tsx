@@ -2,13 +2,12 @@ import type { CardProps } from './card.type';
 import {
   StyledCard,
   StyledCardHeader,
-  StyledCardDescription,
   StyledCardCheckbox,
 } from './Card.styled';
 
 function Card({
   name,
-  description,
+
   onClick,
   isSelected,
   onToggleSelect,
@@ -23,7 +22,6 @@ function Card({
       />
       <div>
         <StyledCardHeader>{name}</StyledCardHeader>
-        <StyledCardDescription>{description}</StyledCardDescription>
       </div>
     </StyledCard>
   );
