@@ -2,7 +2,18 @@ import { render, screen } from '@testing-library/react';
 import { vi } from 'vitest';
 
 import PokemonDetails from './PokemonDetails';
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
 
+const testStore = configureStore({
+  reducer: {},
+});
+const renderPokemonDetails = () =>
+  render(
+    <Provider store={testStore}>
+      <PokemonDetails />
+    </Provider>
+  );
 vi.mock('react-router-dom', () => ({
   useParams: () => ({
     name: 'pikachu',
@@ -18,6 +29,9 @@ import { useGetPokemonByNameQuery } from '../../store/api/pokemonApi';
 const mockedUseGetPokemonByNameQuery = vi.mocked(useGetPokemonByNameQuery);
 
 describe('PokemonDetails', () => {
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
   it('shows loading state in pokemon details', () => {
     mockedUseGetPokemonByNameQuery.mockReturnValue({
       data: undefined,
@@ -26,7 +40,7 @@ describe('PokemonDetails', () => {
       refetch: vi.fn(),
     } as ReturnType<typeof useGetPokemonByNameQuery>);
 
-    render(<PokemonDetails />);
+    renderPokemonDetails();
 
     expect(screen.getByTestId('spinner')).toBeInTheDocument();
   });
@@ -39,7 +53,7 @@ describe('PokemonDetails', () => {
       refetch: vi.fn(),
     } as ReturnType<typeof useGetPokemonByNameQuery>);
 
-    render(<PokemonDetails />);
+    renderPokemonDetails();
 
     expect(screen.getByText(/pokemon details not found/i)).toBeInTheDocument();
   });
@@ -52,7 +66,7 @@ describe('PokemonDetails', () => {
       refetch: vi.fn(),
     } as ReturnType<typeof useGetPokemonByNameQuery>);
 
-    const { container } = render(<PokemonDetails />);
+    const { container } = renderPokemonDetails();
 
     expect(container).toBeEmptyDOMElement();
   });

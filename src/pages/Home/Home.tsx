@@ -31,6 +31,7 @@ import {
 } from './Home.styled';
 
 import {
+  pokemonApi,
   useGetPokemonListQuery,
   useGetPokemonByNameQuery,
 } from '../../store/api/pokemonApi';
@@ -81,7 +82,6 @@ function Home() {
     data: listData,
     isLoading: isListLoading,
     error: listError,
-    refetch: refetchList,
   } = useGetPokemonListQuery(page, {
     skip: Boolean(trimmedSearch),
   });
@@ -89,19 +89,24 @@ function Home() {
     data: pokemonData,
     isLoading: isPokemonLoading,
     error: pokemonError,
-    refetch: refetchPokemon,
   } = useGetPokemonByNameQuery(trimmedSearch, {
     skip: !trimmedSearch,
   });
 
   const handleRefresh = () => {
     if (trimmedSearch) {
-      refetchPokemon();
+      dispatch(
+        pokemonApi.util.invalidateTags([
+          { type: 'PokemonDetails', id: trimmedSearch },
+        ])
+      );
+
       return;
     }
 
-    refetchList();
+    dispatch(pokemonApi.util.invalidateTags(['PokemonList']));
   };
+
   const loading = isListLoading || isPokemonLoading;
   const error = listError || pokemonError;
   const items = trimmedSearch

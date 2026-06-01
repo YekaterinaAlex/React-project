@@ -18,7 +18,6 @@ function CardList({
           <Card
             key={item.name}
             name={item.name}
-            description={item.description}
             onClick={() => onItemClick(item.name)}
             isSelected={selectedItemNames.includes(item.name)}
             onToggleSelect={() => onToggleSelect(item)}

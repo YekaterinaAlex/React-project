@@ -11,14 +11,17 @@ import Spinner from '../Spinner';
 
 import { useGetPokemonByNameQuery } from '../../store/api/pokemonApi';
 
+import { pokemonApi } from '../../store/api/pokemonApi';
+import { useAppDispatch } from '../../store/hooks';
+
 function PokemonDetails() {
   const { name } = useParams();
+  const dispatch = useAppDispatch();
 
   const {
     data: details,
     isLoading,
     error,
-    refetch,
   } = useGetPokemonByNameQuery(name ?? '', {
     skip: !name,
   });
@@ -37,7 +40,17 @@ function PokemonDetails() {
 
   return (
     <StyledContainer>
-      <StyledRefreshButton onClick={() => refetch()}>
+      <StyledRefreshButton
+        onClick={() => {
+          if (name) {
+            dispatch(
+              pokemonApi.util.invalidateTags([
+                { type: 'PokemonDetails', id: name },
+              ])
+            );
+          }
+        }}
+      >
         Refresh details
       </StyledRefreshButton>
 
