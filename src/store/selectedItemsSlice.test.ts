@@ -9,14 +9,12 @@ describe('selectedItemsSlice', () => {
       { items: [] },
       toggleItem({
         name: 'pikachu',
-        description: '',
       })
     );
 
     expect(state.items).toEqual([
       {
         name: 'pikachu',
-        description: '',
       },
     ]);
   });
@@ -27,13 +25,11 @@ describe('selectedItemsSlice', () => {
         items: [
           {
             name: 'pikachu',
-            description: '',
           },
         ],
       },
       toggleItem({
         name: 'pikachu',
-        description: '',
       })
     );
 
@@ -46,11 +42,9 @@ describe('selectedItemsSlice', () => {
         items: [
           {
             name: 'pikachu',
-            description: '',
           },
           {
             name: 'ditto',
-            description: '',
           },
         ],
       },
