@@ -7,11 +7,12 @@ import type {
 
 const PAGE_SIZE = 10;
 const cacheTtl = Number(import.meta.env.VITE_CACHE_TTL) || 60;
+const apiUrl = import.meta.env.VITE_API_URL ?? 'https://pokeapi.co/api/v2';
 
 export const pokemonApi = createApi({
   reducerPath: 'pokemonApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'https://pokeapi.co/api/v2',
+    baseUrl: apiUrl,
   }),
   keepUnusedDataFor: cacheTtl,
   tagTypes: ['PokemonList', 'PokemonDetails'],
