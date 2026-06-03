@@ -15,6 +15,6 @@ export const StyledModal = styled.div`
   background-color: white;
 `;
 
-export const StyledCloseButton = styled.div`
+export const StyledCloseButton = styled.button`
   margin-bottom: 16px;
 `;

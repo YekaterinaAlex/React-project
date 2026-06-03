@@ -1,11 +1,13 @@
+import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { useEffect } from 'react';
 
 import { StyledCloseButton, StyledModal, StyledOverlay } from './Modal.styled';
 
 import type { ModalProps } from './modal.types';
 
 function Modal({ isOpen, onClose, children }: ModalProps) {
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+
   useEffect(() => {
     if (!isOpen) {
       return;
@@ -24,6 +26,12 @@ function Modal({ isOpen, onClose, children }: ModalProps) {
     };
   }, [isOpen, onClose]);
 
+  useEffect(() => {
+    if (isOpen) {
+      closeButtonRef.current?.focus();
+    }
+  }, [isOpen]);
+
   if (!isOpen) {
     return null;
   }
@@ -31,11 +39,15 @@ function Modal({ isOpen, onClose, children }: ModalProps) {
   return createPortal(
     <StyledOverlay onClick={onClose}>
       <StyledModal
+        role="dialog"
+        aria-modal="true"
         onClick={(event) => {
           event.stopPropagation();
         }}
       >
-        <StyledCloseButton onClick={onClose}>Close</StyledCloseButton>
+        <StyledCloseButton ref={closeButtonRef} onClick={onClose}>
+          Close
+        </StyledCloseButton>
 
         {children}
       </StyledModal>
