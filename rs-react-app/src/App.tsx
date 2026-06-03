@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 
 import Modal from './components/Modal';
+import UncontrolledForm from './forms/UncontrolledForm/UncontrolledForm';
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -18,7 +19,7 @@ function App() {
         Open Uncontrolled Form
       </button>
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
-        <h2>Uncontrolled Form</h2>
+        <UncontrolledForm />
       </Modal>
     </main>
   );
