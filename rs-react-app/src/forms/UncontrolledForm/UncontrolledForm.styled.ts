@@ -1,12 +1,9 @@
 import styled from 'styled-components';
 
 export const StyledForm = styled.form`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 16px;
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
 `;
 
 export const StyledField = styled.div`
@@ -24,6 +21,11 @@ export const StyledInput = styled.input`
   border: 1px solid black;
   border-radius: 8px;
   font-size: 16px;
+  &:focus {
+    outline: none;
+    border-color: #1976d2;
+    box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+  }
 `;
 
 export const StyledSelect = styled.select`
@@ -46,13 +48,24 @@ export const StyledCheckbox = styled.input`
 
 export const StyledSubmitButton = styled.button`
   padding: 12px;
-
   border: none;
   border-radius: 8px;
 
-  cursor: pointer;
+  background: #1976d2;
+  color: white;
 
+  cursor: pointer;
   font-size: 16px;
+  font-weight: 600;
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `;
 
 export const StyledError = styled.p`

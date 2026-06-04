@@ -54,19 +54,30 @@ export const createFormSchema = (countries: string[]) =>
           (value) => countries.includes(value),
           'Country must be selected from the list'
         ),
-      image: z
-        .instanceof(File, {
-          error: 'Image is required',
-        })
-        .refine((file) => file.size > 0, 'Image is required')
-        .refine(
-          (file) => file.type === 'image/png' || file.type === 'image/jpeg',
-          'Image must be PNG or JPEG'
-        )
-        .refine(
-          (file) => file.size <= 1024 * 1024,
-          'Image must be less than 1 MB'
-        ),
+      image: z.instanceof(File).superRefine((file, ctx) => {
+        if (file.size === 0) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Image is required',
+          });
+
+          return;
+        }
+
+        if (file.type !== 'image/png' && file.type !== 'image/jpeg') {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Image must be PNG or JPEG',
+          });
+        }
+
+        if (file.size > 1024 * 1024) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Image must be less than 1MB',
+          });
+        }
+      }),
     })
     .refine((data) => data.password === data.confirmPassword, {
       message: 'Passwords must match',

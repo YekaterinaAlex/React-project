@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useAppSelector } from '../../store/hooks';
 
 import { getPasswordStrength } from '../../validation/passwordStrength';
+import { imageToBase64 } from '../../utils/imageToBase64';
 
 import {
   StyledField,
@@ -43,7 +44,7 @@ function UncontrolledForm() {
 
   const countries = useAppSelector((state) => state.forms.countries);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const formData = new FormData(event.currentTarget);
@@ -80,9 +81,12 @@ function UncontrolledForm() {
     }
 
     setErrors({});
+    const imageBase64 = await imageToBase64(result.data.image);
 
-    console.log(result.data);
-    console.log(image);
+    console.log({
+      ...result.data,
+      imageBase64,
+    });
   };
 
   return (
@@ -111,54 +115,7 @@ function UncontrolledForm() {
         </StyledSelect>
         <StyledError>{errors.gender ?? ''}</StyledError>
       </StyledField>
-      <StyledField>
-        <StyledLabel htmlFor="image">Profile Image:</StyledLabel>
-        <StyledInput
-          id="image"
-          name="image"
-          type="file"
-          accept="image/png, image/jpeg"
-        />
-        <StyledError>{errors.image ?? ''}</StyledError>
-      </StyledField>
-      <StyledPasswordRow>
-        <StyledField>
-          <StyledLabel htmlFor="password">Password</StyledLabel>
-          <StyledInput
-            id="password"
-            name="password"
-            type="password"
-            onChange={(event) => setPassword(event.target.value)}
-          />
-          <StyledPasswordRules>
-            <StyledPasswordRule $isValid={passwordStrength.hasNumber}>
-              1 number
-            </StyledPasswordRule>
 
-            <StyledPasswordRule $isValid={passwordStrength.hasUpperCase}>
-              1 uppercase
-            </StyledPasswordRule>
-
-            <StyledPasswordRule $isValid={passwordStrength.hasLowerCase}>
-              1 lowercase
-            </StyledPasswordRule>
-
-            <StyledPasswordRule $isValid={passwordStrength.hasSpecialCharacter}>
-              1 special character
-            </StyledPasswordRule>
-          </StyledPasswordRules>
-          <StyledError>{errors.password ?? ''}</StyledError>
-        </StyledField>
-        <StyledField>
-          <StyledLabel htmlFor="confirmPassword">Confirm Password</StyledLabel>
-          <StyledInput
-            id="confirmPassword"
-            name="confirmPassword"
-            type="password"
-          />
-          <StyledError>{errors.confirmPassword ?? ''}</StyledError>
-        </StyledField>
-      </StyledPasswordRow>
       <StyledField>
         <StyledLabel htmlFor="country">Country</StyledLabel>
         <StyledInput id="country" name="country" type="text" list="countries" />
@@ -169,12 +126,68 @@ function UncontrolledForm() {
         </datalist>
         <StyledError>{errors.country ?? ''}</StyledError>
       </StyledField>
-      <StyledCheckboxWrapper>
-        <StyledCheckbox id="terms" name="terms" type="checkbox" />
+      <StyledField>
+        <StyledPasswordRow>
+          <StyledField>
+            <StyledLabel htmlFor="password">Password</StyledLabel>
+            <StyledInput
+              id="password"
+              name="password"
+              type="password"
+              onChange={(event) => setPassword(event.target.value)}
+            />
+            <StyledPasswordRules>
+              <StyledPasswordRule $isValid={passwordStrength.hasNumber}>
+                1 number
+              </StyledPasswordRule>
 
-        <StyledLabel htmlFor="terms">Accept Terms and Conditions</StyledLabel>
-      </StyledCheckboxWrapper>
-      <StyledError>{errors.termsAccepted ?? ''}</StyledError>
+              <StyledPasswordRule $isValid={passwordStrength.hasUpperCase}>
+                1 uppercase
+              </StyledPasswordRule>
+
+              <StyledPasswordRule $isValid={passwordStrength.hasLowerCase}>
+                1 lowercase
+              </StyledPasswordRule>
+
+              <StyledPasswordRule
+                $isValid={passwordStrength.hasSpecialCharacter}
+              >
+                1 special character
+              </StyledPasswordRule>
+            </StyledPasswordRules>
+            <StyledError>{errors.password ?? ''}</StyledError>
+          </StyledField>
+          <StyledField>
+            <StyledLabel htmlFor="confirmPassword">
+              Confirm Password
+            </StyledLabel>
+            <StyledInput
+              id="confirmPassword"
+              name="confirmPassword"
+              type="password"
+            />
+            <StyledError>{errors.confirmPassword ?? ''}</StyledError>
+          </StyledField>
+        </StyledPasswordRow>
+
+        <StyledField>
+          <StyledLabel htmlFor="image">Profile Image:</StyledLabel>
+          <StyledInput
+            id="image"
+            name="image"
+            type="file"
+            accept="image/png, image/jpeg"
+          />
+          <StyledError>{errors.image ?? ''}</StyledError>
+        </StyledField>
+
+        <StyledCheckboxWrapper>
+          <StyledCheckbox id="terms" name="terms" type="checkbox" />
+
+          <StyledLabel htmlFor="terms">Accept Terms and Conditions</StyledLabel>
+        </StyledCheckboxWrapper>
+        <StyledError>{errors.termsAccepted ?? ''}</StyledError>
+      </StyledField>
       <StyledSubmitButton type="submit">Submit</StyledSubmitButton>
     </StyledForm>
   );
