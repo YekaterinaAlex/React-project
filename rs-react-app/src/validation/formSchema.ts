@@ -54,6 +54,19 @@ export const createFormSchema = (countries: string[]) =>
           (value) => countries.includes(value),
           'Country must be selected from the list'
         ),
+      image: z
+        .instanceof(File, {
+          error: 'Image is required',
+        })
+        .refine((file) => file.size > 0, 'Image is required')
+        .refine(
+          (file) => file.type === 'image/png' || file.type === 'image/jpeg',
+          'Image must be PNG or JPEG'
+        )
+        .refine(
+          (file) => file.size <= 1024 * 1024,
+          'Image must be less than 1 MB'
+        ),
     })
     .refine((data) => data.password === data.confirmPassword, {
       message: 'Passwords must match',

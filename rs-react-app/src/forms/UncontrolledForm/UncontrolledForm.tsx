@@ -17,6 +17,7 @@ import {
   StyledError,
   StyledPasswordRules,
   StyledPasswordRule,
+  StyledPasswordRow,
 } from './UncontrolledForm.styled';
 
 type FormErrors = Partial<
@@ -28,7 +29,8 @@ type FormErrors = Partial<
     | 'termsAccepted'
     | 'password'
     | 'confirmPassword'
-    | 'country',
+    | 'country'
+    | 'image',
     string
   >
 >;
@@ -46,6 +48,8 @@ function UncontrolledForm() {
 
     const formData = new FormData(event.currentTarget);
 
+    const image = formData.get('image');
+
     const data = {
       name: String(formData.get('name') ?? ''),
       age: Number(formData.get('age')),
@@ -56,6 +60,7 @@ function UncontrolledForm() {
       password: String(formData.get('password') ?? ''),
       confirmPassword: String(formData.get('confirmPassword') ?? ''),
       country: String(formData.get('country') ?? ''),
+      image,
     };
 
     const formSchema = createFormSchema(countries);
@@ -77,6 +82,7 @@ function UncontrolledForm() {
     setErrors({});
 
     console.log(result.data);
+    console.log(image);
   };
 
   return (
@@ -106,55 +112,62 @@ function UncontrolledForm() {
         <StyledError>{errors.gender ?? ''}</StyledError>
       </StyledField>
       <StyledField>
-        <StyledLabel htmlFor="password">Password</StyledLabel>
+        <StyledLabel htmlFor="image">Profile Image:</StyledLabel>
         <StyledInput
-          id="password"
-          name="password"
-          type="password"
-          onChange={(event) => setPassword(event.target.value)}
+          id="image"
+          name="image"
+          type="file"
+          accept="image/png, image/jpeg"
         />
-        <StyledPasswordRules>
-          <StyledPasswordRule $isValid={passwordStrength.hasNumber}>
-            1 number
-          </StyledPasswordRule>
-
-          <StyledPasswordRule $isValid={passwordStrength.hasUpperCase}>
-            1 uppercase
-          </StyledPasswordRule>
-
-          <StyledPasswordRule $isValid={passwordStrength.hasLowerCase}>
-            1 lowercase
-          </StyledPasswordRule>
-
-          <StyledPasswordRule $isValid={passwordStrength.hasSpecialCharacter}>
-            1 special character
-          </StyledPasswordRule>
-        </StyledPasswordRules>
-        <StyledError>{errors.password ?? ''}</StyledError>
+        <StyledError>{errors.image ?? ''}</StyledError>
       </StyledField>
-      <StyledField>
-        <StyledLabel htmlFor="confirmPassword">Confirm Password</StyledLabel>
-        <StyledInput
-          id="confirmPassword"
-          name="confirmPassword"
-          type="password"
-        />
-        <StyledError>{errors.confirmPassword ?? ''}</StyledError>
+      <StyledPasswordRow>
         <StyledField>
-          <StyledLabel htmlFor="country">Country</StyledLabel>
+          <StyledLabel htmlFor="password">Password</StyledLabel>
           <StyledInput
-            id="country"
-            name="country"
-            type="text"
-            list="countries"
+            id="password"
+            name="password"
+            type="password"
+            onChange={(event) => setPassword(event.target.value)}
           />
-          <datalist id="countries">
-            {countries.map((country) => (
-              <option key={country} value={country} />
-            ))}
-          </datalist>
-          <StyledError>{errors.country ?? ''}</StyledError>
+          <StyledPasswordRules>
+            <StyledPasswordRule $isValid={passwordStrength.hasNumber}>
+              1 number
+            </StyledPasswordRule>
+
+            <StyledPasswordRule $isValid={passwordStrength.hasUpperCase}>
+              1 uppercase
+            </StyledPasswordRule>
+
+            <StyledPasswordRule $isValid={passwordStrength.hasLowerCase}>
+              1 lowercase
+            </StyledPasswordRule>
+
+            <StyledPasswordRule $isValid={passwordStrength.hasSpecialCharacter}>
+              1 special character
+            </StyledPasswordRule>
+          </StyledPasswordRules>
+          <StyledError>{errors.password ?? ''}</StyledError>
         </StyledField>
+        <StyledField>
+          <StyledLabel htmlFor="confirmPassword">Confirm Password</StyledLabel>
+          <StyledInput
+            id="confirmPassword"
+            name="confirmPassword"
+            type="password"
+          />
+          <StyledError>{errors.confirmPassword ?? ''}</StyledError>
+        </StyledField>
+      </StyledPasswordRow>
+      <StyledField>
+        <StyledLabel htmlFor="country">Country</StyledLabel>
+        <StyledInput id="country" name="country" type="text" list="countries" />
+        <datalist id="countries">
+          {countries.map((country) => (
+            <option key={country} value={country} />
+          ))}
+        </datalist>
+        <StyledError>{errors.country ?? ''}</StyledError>
       </StyledField>
       <StyledCheckboxWrapper>
         <StyledCheckbox id="terms" name="terms" type="checkbox" />

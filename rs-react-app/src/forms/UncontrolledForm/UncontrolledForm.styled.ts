@@ -1,9 +1,12 @@
 import styled from 'styled-components';
 
 export const StyledForm = styled.form`
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 16px;
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 export const StyledField = styled.div`
@@ -58,6 +61,12 @@ export const StyledError = styled.p`
   color: #d32f2f;
   font-size: 14px;
   line-height: 18px;
+`;
+
+export const StyledPasswordRow = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
 `;
 
 export const StyledPasswordRules = styled.ul`
