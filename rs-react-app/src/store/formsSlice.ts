@@ -10,12 +10,16 @@ type FormState = {
 const initialState: FormState = {
   submissions: [],
   countries: [
+    'Armenia',
     'Belarus',
     'Canada',
-    'Kazakhstan',
     'Germany',
-    'United States',
+    'Kazakhstan',
+    'Poland',
+    'Russia',
     'Spain',
+    'Ukraine',
+    'United States',
   ],
 };
 

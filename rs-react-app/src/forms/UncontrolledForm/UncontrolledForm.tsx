@@ -1,6 +1,7 @@
 import { formSchema } from '../../validation/formSchema';
 
 import { useState } from 'react';
+import { useAppSelector } from '../../store/hooks';
 
 import {
   StyledField,
@@ -22,13 +23,16 @@ type FormErrors = Partial<
     | 'gender'
     | 'termsAccepted'
     | 'password'
-    | 'confirmPassword',
+    | 'confirmPassword'
+    | 'country',
     string
   >
 >;
 
 function UncontrolledForm() {
   const [errors, setErrors] = useState<FormErrors>({});
+
+  const countries = useAppSelector((state) => state.forms.countries);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -44,6 +48,7 @@ function UncontrolledForm() {
       termsAccepted: formData.get('terms') === 'on',
       password: String(formData.get('password') ?? ''),
       confirmPassword: String(formData.get('confirmPassword') ?? ''),
+      country: String(formData.get('country') ?? ''),
     };
 
     const result = formSchema.safeParse(data);
@@ -105,6 +110,21 @@ function UncontrolledForm() {
           type="password"
         />
         <StyledError>{errors.confirmPassword ?? ''}</StyledError>
+        <StyledField>
+          <StyledLabel htmlFor="country">Country</StyledLabel>
+          <StyledInput
+            id="country"
+            name="country"
+            type="text"
+            list="countries"
+          />
+          <datalist id="countries">
+            {countries.map((country) => (
+              <option key={country} value={country} />
+            ))}
+          </datalist>
+          <StyledError>{errors.country ?? ''}</StyledError>
+        </StyledField>
       </StyledField>
       <StyledCheckboxWrapper>
         <StyledCheckbox id="terms" name="terms" type="checkbox" />
