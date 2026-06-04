@@ -9,7 +9,7 @@ export const StyledForm = styled.form`
 export const StyledField = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
 `;
 
 export const StyledLabel = styled.label`
@@ -17,17 +17,17 @@ export const StyledLabel = styled.label`
 `;
 
 export const StyledInput = styled.input`
-padding: 8px 12px;
-border 1px solid black;
-border-radius: 8px;
-font-size: 16px;
+  padding: 8px 12px;
+  border: 1px solid black;
+  border-radius: 8px;
+  font-size: 16px;
 `;
 
 export const StyledSelect = styled.select`
-padding: 8px 12px;
-border 1px solid black;
-border-radius: 8px;
-font-size: 16px;
+  padding: 8px 12px;
+  border: 1px solid black;
+  border-radius: 8px;
+  font-size: 16px;
 `;
 
 export const StyledCheckboxWrapper = styled.div`
@@ -50,4 +50,12 @@ export const StyledSubmitButton = styled.button`
   cursor: pointer;
 
   font-size: 16px;
+`;
+
+export const StyledError = styled.p`
+  height: 18px;
+  margin: 0;
+  color: #d32f2f;
+  font-size: 14px;
+  line-height: 18px;
 `;
