@@ -1,7 +1,9 @@
-import { formSchema } from '../../validation/formSchema';
+import { createFormSchema } from '../../validation/formSchema';
 
 import { useState } from 'react';
 import { useAppSelector } from '../../store/hooks';
+
+import { getPasswordStrength } from '../../validation/passwordStrength';
 
 import {
   StyledField,
@@ -13,6 +15,8 @@ import {
   StyledCheckbox,
   StyledSubmitButton,
   StyledError,
+  StyledPasswordRules,
+  StyledPasswordRule,
 } from './UncontrolledForm.styled';
 
 type FormErrors = Partial<
@@ -31,6 +35,9 @@ type FormErrors = Partial<
 
 function UncontrolledForm() {
   const [errors, setErrors] = useState<FormErrors>({});
+  const [password, setPassword] = useState('');
+
+  const passwordStrength = getPasswordStrength(password);
 
   const countries = useAppSelector((state) => state.forms.countries);
 
@@ -51,6 +58,7 @@ function UncontrolledForm() {
       country: String(formData.get('country') ?? ''),
     };
 
+    const formSchema = createFormSchema(countries);
     const result = formSchema.safeParse(data);
 
     if (!result.success) {
@@ -99,7 +107,29 @@ function UncontrolledForm() {
       </StyledField>
       <StyledField>
         <StyledLabel htmlFor="password">Password</StyledLabel>
-        <StyledInput id="password" name="password" type="password" />
+        <StyledInput
+          id="password"
+          name="password"
+          type="password"
+          onChange={(event) => setPassword(event.target.value)}
+        />
+        <StyledPasswordRules>
+          <StyledPasswordRule $isValid={passwordStrength.hasNumber}>
+            1 number
+          </StyledPasswordRule>
+
+          <StyledPasswordRule $isValid={passwordStrength.hasUpperCase}>
+            1 uppercase
+          </StyledPasswordRule>
+
+          <StyledPasswordRule $isValid={passwordStrength.hasLowerCase}>
+            1 lowercase
+          </StyledPasswordRule>
+
+          <StyledPasswordRule $isValid={passwordStrength.hasSpecialCharacter}>
+            1 special character
+          </StyledPasswordRule>
+        </StyledPasswordRules>
         <StyledError>{errors.password ?? ''}</StyledError>
       </StyledField>
       <StyledField>

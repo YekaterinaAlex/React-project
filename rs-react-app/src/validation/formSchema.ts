@@ -12,41 +12,50 @@ const validateEmail = (email: string) => {
   return localPart.length > 0 && domain.includes('.');
 };
 
-export const formSchema = z
-  .object({
-    name: z
-      .string()
-      .min(1, 'Name is required')
-      .refine(
-        (value) => value[0] === value[0]?.toUpperCase(),
-        'Name must start with an uppercase letter'
-      ),
+export const createFormSchema = (countries: string[]) =>
+  z
+    .object({
+      name: z
+        .string()
+        .min(1, 'Name is required')
+        .refine(
+          (value) => value[0] === value[0]?.toUpperCase(),
+          'Name must start with an uppercase letter'
+        ),
 
-    age: z
-      .number({
-        error: 'Age must be a number',
-      })
-      .min(0, 'Age cannot be negative'),
+      age: z
+        .number({
+          error: 'Age must be a number',
+        })
+        .min(1, 'Age cannot be negative'),
 
-    email: z
-      .string()
-      .min(1, 'Email is required')
-      .refine(
-        validateEmail,
-        'Email must contain one @ and a domain with a dot'
-      ),
+      email: z
+        .string()
+        .min(1, 'Email is required')
+        .refine(
+          validateEmail,
+          'Email must contain one @ and a domain with a dot'
+        ),
 
-    gender: z.string().min(1, 'Please select a gender'),
+      gender: z.string().min(1, 'Please select a gender'),
 
-    termsAccepted: z.literal(true, {
-      error: 'You must accept Terms and Conditions',
-    }),
+      termsAccepted: z.literal(true, {
+        error: 'You must accept Terms and Conditions',
+      }),
 
-    password: z.string().min(1, 'Password is required'),
+      password: z.string().min(1, 'Password is required'),
 
-    confirmPassword: z.string().min(1, 'Confirm password is required'),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: 'Passwords must match',
-    path: ['confirmPassword'],
-  });
+      confirmPassword: z.string().min(1, 'Confirm password is required'),
+
+      country: z
+        .string()
+        .min(1, 'Country is required')
+        .refine(
+          (value) => countries.includes(value),
+          'Country must be selected from the list'
+        ),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: 'Passwords must match',
+      path: ['confirmPassword'],
+    });

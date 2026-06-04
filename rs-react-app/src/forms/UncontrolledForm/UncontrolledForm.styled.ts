@@ -59,3 +59,14 @@ export const StyledError = styled.p`
   font-size: 14px;
   line-height: 18px;
 `;
+
+export const StyledPasswordRules = styled.ul`
+  margin: 0;
+  padding-left: 20px;
+`;
+
+export const StyledPasswordRule = styled.li<{ $isValid: boolean }>`
+  color: ${({ $isValid }) => ($isValid ? 'green' : '#d32f2f')};
+  font-size: 14px;
+  font-weight: 500;
+`;
