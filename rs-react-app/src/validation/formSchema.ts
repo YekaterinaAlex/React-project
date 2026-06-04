@@ -37,7 +37,9 @@ export const createFormSchema = (countries: string[]) =>
           'Email must contain one @ and a domain with a dot'
         ),
 
-      gender: z.string().min(1, 'Please select a gender'),
+      gender: z.enum(['male', 'female'], {
+        error: 'Please select a gender',
+      }),
 
       termsAccepted: z.literal(true, {
         error: 'You must accept Terms and Conditions',

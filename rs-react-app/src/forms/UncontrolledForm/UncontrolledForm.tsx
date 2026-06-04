@@ -2,6 +2,8 @@ import { createFormSchema } from '../../validation/formSchema';
 
 import { useState } from 'react';
 import { useAppSelector } from '../../store/hooks';
+import { addSubmission } from '../../store/formsSlice';
+import { useAppDispatch } from '../../store/hooks';
 
 import { getPasswordStrength } from '../../validation/passwordStrength';
 import { imageToBase64 } from '../../utils/imageToBase64';
@@ -39,7 +41,7 @@ type FormErrors = Partial<
 function UncontrolledForm() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [password, setPassword] = useState('');
-
+  const dispatch = useAppDispatch();
   const passwordStrength = getPasswordStrength(password);
 
   const countries = useAppSelector((state) => state.forms.countries);
@@ -83,10 +85,21 @@ function UncontrolledForm() {
     setErrors({});
     const imageBase64 = await imageToBase64(result.data.image);
 
-    console.log({
-      ...result.data,
-      imageBase64,
-    });
+    dispatch(
+      addSubmission({
+        id: crypto.randomUUID(),
+        name: result.data.name,
+        age: result.data.age,
+        email: result.data.email,
+        gender: result.data.gender,
+        termsAccepted: result.data.termsAccepted,
+        country: result.data.country,
+        password: result.data.password,
+        imageBase64,
+        createdAt: Date.now(),
+        isNew: true,
+      })
+    );
   };
 
   return (

@@ -8,4 +8,8 @@ export type FormSubmission = {
   gender: Gender;
   termsAccepted: boolean;
   country: string;
+  password: string;
+  imageBase64: string;
+  createdAt: number;
+  isNew: boolean;
 };
