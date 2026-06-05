@@ -5,6 +5,15 @@ import { useAppSelector } from './store/hooks';
 import Modal from './components/Modal';
 import UncontrolledForm from './forms/UncontrolledForm/UncontrolledForm';
 
+import {
+  StyledCards,
+  StyledSubmissions,
+  StyledCard,
+  StyledCardTitle,
+  StyledBadge,
+  StyledCardText,
+  StyledImage,
+} from './Submissions.styled';
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const openButtonRef = useRef<HTMLButtonElement>(null);
@@ -23,29 +32,33 @@ function App() {
         Open Uncontrolled Form
       </button>
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
-        <UncontrolledForm />
+        <UncontrolledForm onSuccess={handleCloseModal} />
       </Modal>
-      <section>
-        <h2>Submitted forms</h2>
-        {submissions.length === 0 ? (
-          <p>No submissions yet</p>
-        ) : (
-          submissions.map((submission) => (
-            <article key={submission.id}>
-              <img
-                src={submission.imageBase64}
-                alt={submission.name}
-                width="120"
-              />
-              <h3>{submission.name}</h3>
-              <p>Age:{submission.age}</p>
-              <p>Email:{submission.email}</p>
-              <p>Gender:{submission.gender}</p>
-              <p>Country:{submission.country}</p>
-            </article>
-          ))
-        )}
-      </section>
+      <StyledSubmissions>
+        <h2>Submitted Forms</h2>
+
+        <StyledCards>
+          {submissions.map((submission) => (
+            <StyledCard key={submission.id}>
+              <StyledImage src={submission.imageBase64} alt={submission.name} />
+
+              <StyledCardTitle>
+                {submission.name}
+
+                {submission.isNew && <StyledBadge>NEW</StyledBadge>}
+              </StyledCardTitle>
+
+              <StyledCardText>Age: {submission.age}</StyledCardText>
+
+              <StyledCardText>Email: {submission.email}</StyledCardText>
+
+              <StyledCardText>Gender: {submission.gender}</StyledCardText>
+
+              <StyledCardText>Country: {submission.country}</StyledCardText>
+            </StyledCard>
+          ))}
+        </StyledCards>
+      </StyledSubmissions>
     </main>
   );
 }

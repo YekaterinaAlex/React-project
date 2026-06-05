@@ -7,6 +7,7 @@ import { useAppDispatch } from '../../store/hooks';
 
 import { getPasswordStrength } from '../../validation/passwordStrength';
 import { imageToBase64 } from '../../utils/imageToBase64';
+import type { UncontrolledFormProps } from './uncontrolledForms.types';
 
 import {
   StyledField,
@@ -38,7 +39,7 @@ type FormErrors = Partial<
   >
 >;
 
-function UncontrolledForm() {
+function UncontrolledForm({ onSuccess }: UncontrolledFormProps) {
   const [errors, setErrors] = useState<FormErrors>({});
   const [password, setPassword] = useState('');
   const dispatch = useAppDispatch();
@@ -49,7 +50,8 @@ function UncontrolledForm() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const formData = new FormData(event.currentTarget);
+    const form = event.currentTarget;
+    const formData = new FormData(form);
 
     const image = formData.get('image');
 
@@ -100,6 +102,10 @@ function UncontrolledForm() {
         isNew: true,
       })
     );
+
+    form.reset();
+    setPassword('');
+    onSuccess();
   };
 
   return (
@@ -182,25 +188,25 @@ function UncontrolledForm() {
             <StyledError>{errors.confirmPassword ?? ''}</StyledError>
           </StyledField>
         </StyledPasswordRow>
-
-        <StyledField>
-          <StyledLabel htmlFor="image">Profile Image:</StyledLabel>
-          <StyledInput
-            id="image"
-            name="image"
-            type="file"
-            accept="image/png, image/jpeg"
-          />
-          <StyledError>{errors.image ?? ''}</StyledError>
-        </StyledField>
-
-        <StyledCheckboxWrapper>
-          <StyledCheckbox id="terms" name="terms" type="checkbox" />
-
-          <StyledLabel htmlFor="terms">Accept Terms and Conditions</StyledLabel>
-        </StyledCheckboxWrapper>
-        <StyledError>{errors.termsAccepted ?? ''}</StyledError>
       </StyledField>
+      <StyledField>
+        <StyledLabel htmlFor="image">Profile Image:</StyledLabel>
+        <StyledInput
+          id="image"
+          name="image"
+          type="file"
+          accept="image/png, image/jpeg"
+        />
+        <StyledError>{errors.image ?? ''}</StyledError>
+      </StyledField>
+
+      <StyledCheckboxWrapper>
+        <StyledCheckbox id="terms" name="terms" type="checkbox" />
+
+        <StyledLabel htmlFor="terms">Accept Terms and Conditions</StyledLabel>
+      </StyledCheckboxWrapper>
+      <StyledError>{errors.termsAccepted ?? ''}</StyledError>
+
       <StyledSubmitButton type="submit">Submit</StyledSubmitButton>
     </StyledForm>
   );
