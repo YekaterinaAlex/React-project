@@ -4,6 +4,7 @@ import { useAppSelector } from './store/hooks';
 
 import Modal from './components/Modal';
 import UncontrolledForm from './forms/UncontrolledForm/UncontrolledForm';
+import ReactHookForm from './forms/ReactHookForm/ReactHookForm';
 
 import {
   StyledCards,
@@ -16,6 +17,7 @@ import {
 } from './Submissions.styled';
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isReactHookFormOpen, setIsReactHookFormOpen] = useState(false);
   const openButtonRef = useRef<HTMLButtonElement>(null);
 
   const submissions = useAppSelector((state) => state.forms.submissions);
@@ -24,13 +26,21 @@ function App() {
     setIsModalOpen(false);
     openButtonRef.current?.focus();
   };
-
+  const handleCloseReactHookForm = () => {
+    setIsReactHookFormOpen(false);
+  };
   return (
     <main>
       <h1>React Forms</h1>
       <button ref={openButtonRef} onClick={() => setIsModalOpen(true)}>
         Open Uncontrolled Form
       </button>
+      <button onClick={() => setIsReactHookFormOpen(true)}>
+        Open React Hook Form
+      </button>
+      <Modal isOpen={isReactHookFormOpen} onClose={handleCloseReactHookForm}>
+        <ReactHookForm />
+      </Modal>
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
         <UncontrolledForm onSuccess={handleCloseModal} />
       </Modal>
