@@ -85,3 +85,5 @@ export const createFormSchema = (countries: string[]) =>
       message: 'Passwords must match',
       path: ['confirmPassword'],
     });
+
+export type FormValues = z.infer<ReturnType<typeof createFormSchema>>;
