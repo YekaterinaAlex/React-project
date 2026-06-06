@@ -10,13 +10,11 @@ export const StyledCards = styled.div`
   gap: 16px;
 `;
 
-export const StyledCard = styled.article`
+export const StyledCard = styled.article<{ $isNew: boolean }>`
   padding: 16px;
-
-  border: 1px solid #ddd;
+  border: 5px solid ${({ $isNew }) => ($isNew ? '#4caf50' : '#ddd')};
   border-radius: 12px;
-
-  background-color: white;
+  background-color: ${({ $isNew }) => ($isNew ? '#e8f5e9' : 'white')};
 `;
 
 export const StyledImage = styled.img`

@@ -30,9 +30,18 @@ const formsSlice = createSlice({
     addSubmission: (state, action: PayloadAction<FormSubmission>) => {
       state.submissions.unshift(action.payload);
     },
+    markSubmissionAsSeen: (state, action: PayloadAction<string>) => {
+      const submission = state.submissions.find(
+        (item) => item.id === action.payload
+      );
+
+      if (submission) {
+        submission.isNew = false;
+      }
+    },
   },
 });
 
-export const { addSubmission } = formsSlice.actions;
+export const { addSubmission, markSubmissionAsSeen } = formsSlice.actions;
 
 export default formsSlice.reducer;
