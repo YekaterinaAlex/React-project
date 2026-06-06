@@ -1,9 +1,12 @@
-import { useForm, useWatch } from 'react-hook-form';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 
-import { useAppSelector } from '../../store/hooks';
+import { useAppSelector, useAppDispatch } from '../../store/hooks';
+import { addSubmission } from '../../store/formsSlice';
+import { imageToBase64 } from '../../utils/imageToBase64';
 import { createFormSchema, type FormValues } from '../../validation/formSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { getPasswordStrength } from '../../validation/passwordStrength';
+import type { ReactHookFormProps } from './reactHookForm.types';
 
 import {
   StyledForm,
@@ -20,14 +23,16 @@ import {
   StyledPasswordRules,
 } from '../UncontrolledForm/UncontrolledForm.styled';
 
-function ReactHookForm() {
+function ReactHookForm({ onSuccess }: ReactHookFormProps) {
   const countries = useAppSelector((state) => state.forms.countries);
   const formSchema = createFormSchema(countries);
+  const dispatch = useAppDispatch();
 
   const {
     register,
     handleSubmit,
     control,
+    reset,
     formState: { errors, isValid },
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -50,8 +55,27 @@ function ReactHookForm() {
     }) ?? '';
   const passwordStrength = getPasswordStrength(passwordValue);
 
-  const onSubmit = (data: FormValues) => {
-    console.log(data);
+  const onSubmit = async (data: FormValues) => {
+    const imageBase64 = await imageToBase64(data.image);
+    const createdAt = new Date().getTime();
+
+    dispatch(
+      addSubmission({
+        id: crypto.randomUUID(),
+        name: data.name,
+        age: data.age,
+        email: data.email,
+        gender: data.gender,
+        termsAccepted: data.termsAccepted,
+        country: data.country,
+        password: data.password,
+        imageBase64,
+        createdAt,
+        isNew: true,
+      })
+    );
+    reset();
+    onSuccess();
   };
 
   return (
@@ -88,6 +112,23 @@ function ReactHookForm() {
           <option value="female">Female</option>
         </StyledSelect>
         <StyledError>{errors.gender?.message ?? ''}</StyledError>
+      </StyledField>
+      <StyledField>
+        <StyledLabel htmlFor="rhf-country">Country</StyledLabel>
+
+        <StyledInput
+          id="rhf-country"
+          list="rhf-countries"
+          {...register('country')}
+        />
+
+        <datalist id="rhf-countries">
+          {countries.map((country) => (
+            <option key={country} value={country} />
+          ))}
+        </datalist>
+
+        <StyledError>{errors.country?.message ?? ''}</StyledError>
       </StyledField>
       <StyledPasswordRow>
         <StyledField>
@@ -128,6 +169,27 @@ function ReactHookForm() {
           <StyledError>{errors.confirmPassword?.message ?? ''}</StyledError>
         </StyledField>
       </StyledPasswordRow>
+      <StyledField>
+        <StyledLabel htmlFor="rhf-image">Profile Image</StyledLabel>
+
+        <Controller
+          name="image"
+          control={control}
+          render={({ field: { onChange, ref } }) => (
+            <StyledInput
+              id="rhf-image"
+              type="file"
+              accept="image/png, image/jpeg"
+              ref={ref}
+              onChange={(event) => {
+                onChange(event.target.files?.[0]);
+              }}
+            />
+          )}
+        />
+
+        <StyledError>{errors.image?.message ?? ''}</StyledError>
+      </StyledField>
       <StyledCheckboxWrapper>
         <StyledCheckbox
           id="rhf-terms"

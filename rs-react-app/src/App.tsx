@@ -39,7 +39,7 @@ function App() {
         Open React Hook Form
       </button>
       <Modal isOpen={isReactHookFormOpen} onClose={handleCloseReactHookForm}>
-        <ReactHookForm />
+        <ReactHookForm onSuccess={handleCloseReactHookForm} />
       </Modal>
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
         <UncontrolledForm onSuccess={handleCloseModal} />
