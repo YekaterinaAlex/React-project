@@ -41,9 +41,9 @@ export const createFormSchema = (countries: string[]) =>
         error: 'Please select a gender',
       }),
 
-      termsAccepted: z.literal(true, {
-        error: 'You must accept Terms and Conditions',
-      }),
+      termsAccepted: z
+        .boolean()
+        .refine((value) => value, 'You must accept Terms and Conditions'),
 
       password: z.string().min(1, 'Password is required'),
 

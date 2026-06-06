@@ -1,8 +1,9 @@
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 
 import { useAppSelector } from '../../store/hooks';
 import { createFormSchema, type FormValues } from '../../validation/formSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { getPasswordStrength } from '../../validation/passwordStrength';
 
 import {
   StyledForm,
@@ -14,6 +15,9 @@ import {
   StyledCheckbox,
   StyledSubmitButton,
   StyledError,
+  StyledPasswordRow,
+  StyledPasswordRule,
+  StyledPasswordRules,
 } from '../UncontrolledForm/UncontrolledForm.styled';
 
 function ReactHookForm() {
@@ -23,11 +27,29 @@ function ReactHookForm() {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors, isValid },
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     mode: 'onChange',
+    defaultValues: {
+      name: '',
+      email: '',
+      gender: undefined,
+      termsAccepted: false,
+      password: '',
+      confirmPassword: '',
+      country: '',
+    },
   });
+
+  const passwordValue =
+    useWatch({
+      control,
+      name: 'password',
+    }) ?? '';
+  const passwordStrength = getPasswordStrength(passwordValue);
+
   const onSubmit = (data: FormValues) => {
     console.log(data);
   };
@@ -45,7 +67,9 @@ function ReactHookForm() {
         <StyledInput
           id="rhf-age"
           type="number"
-          {...register('age', { valueAsNumber: true })}
+          {...register('age', {
+            setValueAs: (value) => (value === '' ? NaN : Number(value)),
+          })}
         />
         <StyledError>{errors.age?.message ?? ''}</StyledError>
       </StyledField>
@@ -65,7 +89,45 @@ function ReactHookForm() {
         </StyledSelect>
         <StyledError>{errors.gender?.message ?? ''}</StyledError>
       </StyledField>
+      <StyledPasswordRow>
+        <StyledField>
+          <StyledLabel htmlFor="rhf-password">Password</StyledLabel>
+          <StyledInput
+            id="rhf-password"
+            type="password"
+            {...register('password')}
+          />
+          <StyledPasswordRules>
+            <StyledPasswordRule $isValid={passwordStrength.hasNumber}>
+              1 number
+            </StyledPasswordRule>
 
+            <StyledPasswordRule $isValid={passwordStrength.hasUpperCase}>
+              1 uppercase
+            </StyledPasswordRule>
+
+            <StyledPasswordRule $isValid={passwordStrength.hasLowerCase}>
+              1 lowercase
+            </StyledPasswordRule>
+
+            <StyledPasswordRule $isValid={passwordStrength.hasSpecialCharacter}>
+              1 special character
+            </StyledPasswordRule>
+          </StyledPasswordRules>
+          <StyledError>{errors.password?.message ?? ''}</StyledError>
+        </StyledField>
+        <StyledField>
+          <StyledLabel htmlFor="rhf-confirmPassword">
+            Confirm Password
+          </StyledLabel>
+          <StyledInput
+            id="rhf-confirmPassword"
+            type="password"
+            {...register('confirmPassword')}
+          />
+          <StyledError>{errors.confirmPassword?.message ?? ''}</StyledError>
+        </StyledField>
+      </StyledPasswordRow>
       <StyledCheckboxWrapper>
         <StyledCheckbox
           id="rhf-terms"
