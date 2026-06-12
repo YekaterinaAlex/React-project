@@ -7,6 +7,8 @@ import { createFormSchema, type FormValues } from '../../validation/formSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { getPasswordStrength } from '../../validation/passwordStrength';
 import type { ReactHookFormProps } from './reactHookForm.types';
+import { useState } from 'react';
+import { FiEye, FiEyeOff } from 'react-icons/fi';
 
 import {
   StyledForm,
@@ -21,9 +23,13 @@ import {
   StyledPasswordRow,
   StyledPasswordRule,
   StyledPasswordRules,
+  StyledPasswordInputWrapper,
+  StyledPasswordToggleButton,
 } from '../UncontrolledForm/UncontrolledForm.styled';
 
 function ReactHookForm({ onSuccess }: ReactHookFormProps) {
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const countries = useAppSelector((state) => state.forms.countries);
   const formSchema = createFormSchema(countries);
   const dispatch = useAppDispatch();
@@ -133,11 +139,20 @@ function ReactHookForm({ onSuccess }: ReactHookFormProps) {
       <StyledPasswordRow>
         <StyledField>
           <StyledLabel htmlFor="rhf-password">Password</StyledLabel>
-          <StyledInput
-            id="rhf-password"
-            type="password"
-            {...register('password')}
-          />
+          <StyledPasswordInputWrapper>
+            <StyledInput
+              id="rhf-password"
+              type={showPassword ? 'text' : 'password'}
+              {...register('password')}
+            />
+
+            <StyledPasswordToggleButton
+              type="button"
+              onClick={() => setShowPassword((prev) => !prev)}
+            >
+              {showPassword ? <FiEyeOff /> : <FiEye />}
+            </StyledPasswordToggleButton>
+          </StyledPasswordInputWrapper>
           <StyledPasswordRules>
             <StyledPasswordRule $isValid={passwordStrength.hasNumber}>
               1 number
@@ -161,11 +176,20 @@ function ReactHookForm({ onSuccess }: ReactHookFormProps) {
           <StyledLabel htmlFor="rhf-confirmPassword">
             Confirm Password
           </StyledLabel>
-          <StyledInput
-            id="rhf-confirmPassword"
-            type="password"
-            {...register('confirmPassword')}
-          />
+          <StyledPasswordInputWrapper>
+            <StyledInput
+              id="rhf-confirmPassword"
+              type={showConfirmPassword ? 'text' : 'password'}
+              {...register('confirmPassword')}
+            />
+
+            <StyledPasswordToggleButton
+              type="button"
+              onClick={() => setShowConfirmPassword((prev) => !prev)}
+            >
+              {showConfirmPassword ? <FiEyeOff /> : <FiEye />}
+            </StyledPasswordToggleButton>
+          </StyledPasswordInputWrapper>
           <StyledError>{errors.confirmPassword?.message ?? ''}</StyledError>
         </StyledField>
       </StyledPasswordRow>

@@ -17,10 +17,13 @@ export const StyledLabel = styled.label`
 `;
 
 export const StyledInput = styled.input`
-  padding: 8px 12px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 40px 8px 12px;
   border: 1px solid black;
   border-radius: 8px;
   font-size: 16px;
+
   &:focus {
     outline: none;
     border-color: #1976d2;
@@ -91,4 +94,28 @@ export const StyledPasswordRule = styled.li<{ $isValid: boolean }>`
   color: ${({ $isValid }) => ($isValid ? 'green' : '#d32f2f')};
   font-size: 14px;
   font-weight: 500;
+`;
+
+export const StyledPasswordInputWrapper = styled.div`
+  position: relative;
+  width: 100%;
+`;
+
+export const StyledPasswordToggleButton = styled.button`
+  position: absolute;
+  top: 50%;
+  right: 12px;
+
+  transform: translateY(-50%);
+
+  border: none;
+  background: transparent;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+  color: #666;
+  cursor: pointer;
 `;

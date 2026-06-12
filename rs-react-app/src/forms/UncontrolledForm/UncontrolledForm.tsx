@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useAppSelector } from '../../store/hooks';
 import { addSubmission } from '../../store/formsSlice';
 import { useAppDispatch } from '../../store/hooks';
+import { FiEye, FiEyeOff } from 'react-icons/fi';
 
 import { getPasswordStrength } from '../../validation/passwordStrength';
 import { imageToBase64 } from '../../utils/imageToBase64';
@@ -22,6 +23,8 @@ import {
   StyledPasswordRules,
   StyledPasswordRule,
   StyledPasswordRow,
+  StyledPasswordInputWrapper,
+  StyledPasswordToggleButton,
 } from './UncontrolledForm.styled';
 
 type FormErrors = Partial<
@@ -42,6 +45,10 @@ type FormErrors = Partial<
 function UncontrolledForm({ onSuccess }: UncontrolledFormProps) {
   const [errors, setErrors] = useState<FormErrors>({});
   const [password, setPassword] = useState('');
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const dispatch = useAppDispatch();
   const passwordStrength = getPasswordStrength(password);
 
@@ -105,6 +112,8 @@ function UncontrolledForm({ onSuccess }: UncontrolledFormProps) {
 
     form.reset();
     setPassword('');
+    setShowPassword(false);
+    setShowConfirmPassword(false);
     onSuccess();
   };
 
@@ -149,12 +158,21 @@ function UncontrolledForm({ onSuccess }: UncontrolledFormProps) {
         <StyledPasswordRow>
           <StyledField>
             <StyledLabel htmlFor="password">Password</StyledLabel>
-            <StyledInput
-              id="password"
-              name="password"
-              type="password"
-              onChange={(event) => setPassword(event.target.value)}
-            />
+            <StyledPasswordInputWrapper>
+              <StyledInput
+                id="password"
+                name="password"
+                type={showPassword ? 'text' : 'password'}
+                onChange={(event) => setPassword(event.target.value)}
+              />
+
+              <StyledPasswordToggleButton
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+              >
+                {showPassword ? <FiEyeOff /> : <FiEye />}
+              </StyledPasswordToggleButton>
+            </StyledPasswordInputWrapper>
             <StyledPasswordRules>
               <StyledPasswordRule $isValid={passwordStrength.hasNumber}>
                 1 number
@@ -180,11 +198,20 @@ function UncontrolledForm({ onSuccess }: UncontrolledFormProps) {
             <StyledLabel htmlFor="confirmPassword">
               Confirm Password
             </StyledLabel>
-            <StyledInput
-              id="confirmPassword"
-              name="confirmPassword"
-              type="password"
-            />
+            <StyledPasswordInputWrapper>
+              <StyledInput
+                id="confirmPassword"
+                name="confirmPassword"
+                type={showConfirmPassword ? 'text' : 'password'}
+              />
+
+              <StyledPasswordToggleButton
+                type="button"
+                onClick={() => setShowConfirmPassword((prev) => !prev)}
+              >
+                {showConfirmPassword ? <FiEyeOff /> : <FiEye />}
+              </StyledPasswordToggleButton>
+            </StyledPasswordInputWrapper>
             <StyledError>{errors.confirmPassword ?? ''}</StyledError>
           </StyledField>
         </StyledPasswordRow>
