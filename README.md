@@ -29,4 +29,33 @@ React application for browsing Pokémon with routing, state management, theme sw
 
 ## Environment Variables
 
+Create a `.env` file:
+
+```env
+VITE_API_URL=https://pokeapi.co/api/v2
 VITE_CACHE_TTL=60
+```
+
+## Scripts
+
+Start development server:
+
+```bash
+npm run dev
+```
+
+Run tests:
+
+```bash
+npm test
+```
+
+Build project:
+
+```bash
+npm run build
+```
+
+## Deployment
+
+https://my-react-project-111.netlify.app/?page=1
