@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Outlet,
   useNavigate,
@@ -16,12 +16,9 @@ import ErrorBoundary from '../../components/ErrorBoundary';
 import Bug from '../../components/Bug';
 import Flyout from '../../components/Flyout';
 import { downloadCSV } from '../../utils/downloadCSV';
+import Spinner from '../../components/Spinner';
 
-import type {
-  Item,
-  PokemonListResponse,
-  PokemonDetailsResponse,
-} from './home.type';
+import type { Item } from './home.type';
 
 import {
   AppWrapper,
@@ -32,17 +29,17 @@ import {
   ErrorButton,
   DetailsSection,
 } from './Home.styled';
-import { fetchData } from '../../utils/fetchData';
+
+import {
+  pokemonApi,
+  useGetPokemonListQuery,
+  useGetPokemonByNameQuery,
+} from '../../store/api/pokemonApi';
+
 import useLocalStorage from '../../hooks/useLocalStorage';
-const ITEMS_PER_PAGE = 10;
 
 function Home() {
-  const [items, setItems] = useState<Item[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [hasTestError, setHasTestError] = useState(false);
-
-  const [hasNextPage, setHasNextPage] = useState(false);
   const { storedValue: searchTerm, setValue: setSearchTerm } = useLocalStorage(
     'searchTerm',
     ''
@@ -79,6 +76,52 @@ function Home() {
 
   const page = Number(searchParams.get('page')) || 1;
 
+  const trimmedSearch = searchTerm.trim().toLowerCase();
+
+  const {
+    data: listData,
+    isLoading: isListLoading,
+    error: listError,
+  } = useGetPokemonListQuery(page, {
+    skip: Boolean(trimmedSearch),
+  });
+  const {
+    data: pokemonData,
+    isLoading: isPokemonLoading,
+    error: pokemonError,
+  } = useGetPokemonByNameQuery(trimmedSearch, {
+    skip: !trimmedSearch,
+  });
+
+  const handleRefresh = () => {
+    if (trimmedSearch) {
+      dispatch(
+        pokemonApi.util.invalidateTags([
+          { type: 'PokemonDetails', id: trimmedSearch },
+        ])
+      );
+
+      return;
+    }
+
+    dispatch(pokemonApi.util.invalidateTags(['PokemonList']));
+  };
+
+  const loading = isListLoading || isPokemonLoading;
+  const error = listError || pokemonError;
+  const items = trimmedSearch
+    ? pokemonData
+      ? [
+          {
+            name: pokemonData.name,
+          },
+        ]
+      : []
+    : (listData?.results?.map((pokemon) => ({
+        name: pokemon.name,
+      })) ?? []);
+
+  const hasNextPage = Boolean(listData?.next);
   const handleCloseDetails = () => {
     navigate(`/?page=${page}`);
   };
@@ -96,71 +139,13 @@ function Home() {
     navigate(`/pokemon/${name}?page=${page}`);
   };
 
-  const handleSearch = useCallback(
-    async (value: string) => {
-      const trimmed = value.trim().toLowerCase();
-
-      try {
-        setLoading(true);
-        setError(null);
-
-        if (trimmed) {
-          const pokemon = await fetchData<PokemonDetailsResponse>(
-            `https://pokeapi.co/api/v2/pokemon/${trimmed}`
-          );
-
-          setHasNextPage(false);
-
-          setSearchTerm(trimmed);
-
-          setItems([
-            {
-              name: pokemon.name,
-              description: '',
-            },
-          ]);
-
-          return;
-        }
-
-        const offset = (page - 1) * ITEMS_PER_PAGE;
-
-        const data = await fetchData<PokemonListResponse>(
-          `https://pokeapi.co/api/v2/pokemon?offset=${offset}&limit=${ITEMS_PER_PAGE}`
-        );
-
-        setHasNextPage(Boolean(data.next));
-
-        const newItems = data.results.map((pokemon) => ({
-          name: pokemon.name,
-          description: '',
-        }));
-
-        setSearchTerm('');
-        setItems(newItems);
-      } catch {
-        setItems([]);
-        setHasNextPage(false);
-
-        setError('Pokemon not found');
-      } finally {
-        setLoading(false);
-      }
-    },
-    [page, setSearchTerm]
-  );
-
   const handleUserSearch = (value: string) => {
+    setSearchTerm(value);
+
     setSearchParams({
       page: '1',
     });
-
-    handleSearch(value);
   };
-
-  useEffect(() => {
-    handleSearch(searchTerm);
-  }, [page, searchTerm, handleSearch]);
 
   if (hasTestError) {
     throw new Error('Test error');
@@ -177,9 +162,10 @@ function Home() {
 
         <Layout>
           <ResultSection>
-            {loading && <p>Loading...</p>}
+            <ErrorButton onClick={handleRefresh}>Refresh</ErrorButton>
+            {loading && <Spinner data-testid="spinner" />}
 
-            {!loading && error && <p>{error}</p>}
+            {!loading && error && <p>Pokemon not found</p>}
 
             {!loading && !error && (
               <>

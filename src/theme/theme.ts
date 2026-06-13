@@ -11,7 +11,6 @@ export const lightTheme = {
   buttonHoverBackground: '#1d4ed8',
 
   border: '#cbd5e1',
-  descriptionText: '#64748b',
 };
 
 export const darkTheme = {
@@ -27,5 +26,4 @@ export const darkTheme = {
   buttonHoverBackground: '#2563eb',
 
   border: '#334155',
-  descriptionText: '#cbd5e1',
 };

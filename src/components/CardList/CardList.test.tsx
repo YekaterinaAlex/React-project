@@ -16,10 +16,7 @@ describe('CardList', () => {
   });
 
   it('renders all items, when array has items in the array', () => {
-    const items = [
-      { name: 'pikachu', description: 'Height: 4, Weight: 60' },
-      { name: 'ditto', description: 'Height: 3, Weight: 40' },
-    ];
+    const items = [{ name: 'pikachu' }, { name: 'ditto' }];
 
     render(
       <CardList
@@ -33,10 +30,6 @@ describe('CardList', () => {
     expect(screen.getByText('pikachu')).toBeInTheDocument();
 
     expect(screen.getByText('ditto')).toBeInTheDocument();
-
-    expect(screen.getByText('Height: 4, Weight: 60')).toBeInTheDocument();
-
-    expect(screen.getByText('Height: 3, Weight: 40')).toBeInTheDocument();
 
     const checkboxes = screen.getAllByRole('checkbox');
 

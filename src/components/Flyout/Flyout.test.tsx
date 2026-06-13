@@ -16,7 +16,7 @@ describe('Flyout', () => {
 
     render(
       <Flyout
-        items={[{ name: 'hypno', description: '' }]}
+        items={[{ name: 'hypno' }]}
         onUnselect={onUnselect}
         onDownload={onDownload}
       />

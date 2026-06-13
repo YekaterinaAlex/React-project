@@ -21,7 +21,6 @@ describe('downloadCSV', () => {
     downloadCSV([
       {
         name: 'pikachu',
-        description: 'Height: 4, Weight: 60',
       },
     ]);
 

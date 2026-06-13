@@ -12,7 +12,6 @@ declare module 'styled-components' {
     buttonHoverBackground: string;
 
     border: string;
-    descriptionText: string;
 
     inputBackground: string;
   }
