@@ -5,16 +5,14 @@ import type {
   PokemonDetailsResponse,
 } from '../../pages/Home/home.type';
 
-const PAGE_SIZE = 10;
-const cacheTtl = Number(import.meta.env.VITE_CACHE_TTL) || 60;
-const apiUrl = import.meta.env.VITE_API_URL ?? 'https://pokeapi.co/api/v2';
+import { API_URL, CACHE_TTL, PAGE_SIZE } from '../../config/config';
 
 export const pokemonApi = createApi({
   reducerPath: 'pokemonApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: apiUrl,
+    baseUrl: API_URL,
   }),
-  keepUnusedDataFor: cacheTtl,
+  keepUnusedDataFor: CACHE_TTL,
   tagTypes: ['PokemonList', 'PokemonDetails'],
   endpoints: (builder) => ({
     getPokemonList: builder.query<PokemonListResponse, number>({
