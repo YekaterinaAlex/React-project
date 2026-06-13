@@ -1,18 +1,18 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
+import { API_URL, CACHE_TTL_SECONDS, PAGE_SIZE } from '../../config/config';
+
 import type {
   PokemonListResponse,
   PokemonDetailsResponse,
 } from '../../pages/Home/home.type';
-
-import { API_URL, CACHE_TTL, PAGE_SIZE } from '../../config/config';
 
 export const pokemonApi = createApi({
   reducerPath: 'pokemonApi',
   baseQuery: fetchBaseQuery({
     baseUrl: API_URL,
   }),
-  keepUnusedDataFor: CACHE_TTL,
+  keepUnusedDataFor: CACHE_TTL_SECONDS,
   tagTypes: ['PokemonList', 'PokemonDetails'],
   endpoints: (builder) => ({
     getPokemonList: builder.query<PokemonListResponse, number>({
