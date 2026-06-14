@@ -17,7 +17,7 @@ type CountryCardProps = {
   selectedColumns: string[];
 };
 
-export const CountryCard = ({ country, selectedYear, selectedColumns }: CountryCardProps) => {
+const CountryCardComponent = ({ country, selectedYear, selectedColumns }: CountryCardProps) => {
   const yearDataMap = useMemo(() => createYearDataMap(country.data), [country.data]);
 
   const population = useMemo(
@@ -47,4 +47,4 @@ export const CountryCard = ({ country, selectedYear, selectedColumns }: CountryC
     </div>
   );
 };
-export default memo(CountryCard);
+export const CountryCard = memo(CountryCardComponent);

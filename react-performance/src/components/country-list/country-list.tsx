@@ -1,10 +1,9 @@
+import { useMemo } from 'react';
+import { List, type RowComponentProps } from 'react-window';
+
 import type { Country } from '../../types';
 import { CountryCard } from '../country-card/country-card';
 import { getPopulationForYear, createYearDataMap } from '../../utils/data-transformers';
-
-import { useMemo } from 'react';
-
-import styles from './country-list.module.css';
 
 type CountryListProps = {
   countries: Country[];
@@ -14,7 +13,32 @@ type CountryListProps = {
   selectedYear: number;
   sortField: 'name' | 'population';
   sortOrder: 'asc' | 'desc';
-  onYearChange: (year: number) => void;
+};
+
+type CountryRowProps = {
+  countries: Country[];
+  selectedYear: number;
+  selectedColumns: string[];
+};
+
+const CountryRow = ({
+  index,
+  style,
+  countries,
+  selectedYear,
+  selectedColumns,
+}: RowComponentProps<CountryRowProps>) => {
+  const country = countries[index];
+
+  return (
+    <div style={style}>
+      <CountryCard
+        country={country}
+        selectedYear={selectedYear}
+        selectedColumns={selectedColumns}
+      />
+    </div>
+  );
 };
 
 export const CountryList = ({
@@ -52,15 +76,19 @@ export const CountryList = ({
   }, [countries, searchQuery, selectedRegion, selectedYear, sortField, sortOrder]);
 
   return (
-    <div className={styles.countryList}>
-      {filteredCountries.map((country) => (
-        <CountryCard
-          key={country.id}
-          country={country}
-          selectedYear={selectedYear}
-          selectedColumns={selectedColumns}
-        />
-      ))}
-    </div>
+    <List
+      rowCount={filteredCountries.length}
+      rowHeight={320}
+      rowComponent={CountryRow}
+      rowProps={{
+        countries: filteredCountries,
+        selectedYear,
+        selectedColumns,
+      }}
+      style={{
+        height: 800,
+        width: '100%',
+      }}
+    />
   );
 };
