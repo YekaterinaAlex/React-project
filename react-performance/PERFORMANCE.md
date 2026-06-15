@@ -30,34 +30,34 @@
 
 ### Interaction A: Sort countries
 
-- **Commit duration**: \_\_\_ s
-- **Render duration**: \_\_\_ ms
-- **Screenshot**: ![screenshot](image.png)
+- **Commit duration**: 2.3 s
+- **Render duration**: 68.3 ms
+- **Screenshot**: ![Sort](./screenshots/optimized/sort1.png)
 
 ### Interaction B: Search countries
 
-- **Commit duration**: \_\_\_ s
-- **Render duration**: \_\_\_ ms
-- **Screenshot**: ![screenshot](image.png)
+- **Commit duration**: 2.1 s
+- **Render duration**: 37.2 ms
+- **Screenshot**: ![Search](./screenshots/optimized/search1.png)
 
 ### Interaction C: Change year
 
-- **Commit duration**: \_\_\_ s
-- **Render duration**: \_\_\_ ms
-- **Screenshot**: ![screenshot](image.png)
+- **Commit duration**: 2.4 s
+- **Render duration**: 31.6 ms
+- **Screenshot**: ![Year](./screenshots/optimized/year1.png)
 
 ### Interaction D: Toggle column
 
-- **Commit duration**: \_\_\_ s
-- **Render duration**: \_\_\_ ms
-- **Screenshot**: ![screenshot](image.png)
+- **Commit duration**: 1 s
+- **Render duration**: 10 ms
+- **Screenshot**: ![Column](./screenshots/optimized/column1.png)
 
 ## Summary of Improvements
 
 | Interaction      | Baseline (ms) | Optimized (ms) | Improvement |
 | ---------------- | ------------- | -------------- | ----------- |
-| Sort countries   | \_\_\_        | \_\_\_         | \_\_\_%     |
-| Search countries | \_\_\_        | \_\_\_         | \_\_\_%     |
-| Change year      | \_\_\_        | \_\_\_         | \_\_\_%     |
-| Toggle column    | \_\_\_        | \_\_\_         | \_\_\_%     |
-| **Average**      | **\_\_\_**    | **\_\_\_**     | **\_\_\_%** |
+| Sort countries   | 222.7         | 68.3           | 69.3 %      |
+| Search countries | 129.3         | 37.2           | 71.2 %      |
+| Change year      | 209.6         | 31.6           | 84.9 %      |
+| Toggle column    | 211.2         | 10             | 95.3 %      |
+| **Average**      | **193.2**     | **36.8**       | **80.9%**   |
