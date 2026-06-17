@@ -1,0 +1,241 @@
+import { createFormSchema } from '../../validation/formSchema';
+
+import { useState } from 'react';
+import { useAppSelector } from '../../store/hooks';
+import { addSubmission } from '../../store/formsSlice';
+import { useAppDispatch } from '../../store/hooks';
+import { FiEye, FiEyeOff } from 'react-icons/fi';
+
+import { getPasswordStrength } from '../../validation/passwordStrength';
+import { imageToBase64 } from '../../utils/imageToBase64';
+import type { UncontrolledFormProps } from './uncontrolledForms.types';
+
+import {
+  StyledField,
+  StyledForm,
+  StyledLabel,
+  StyledInput,
+  StyledSelect,
+  StyledCheckboxWrapper,
+  StyledCheckbox,
+  StyledSubmitButton,
+  StyledError,
+  StyledPasswordRules,
+  StyledPasswordRule,
+  StyledPasswordRow,
+  StyledPasswordInputWrapper,
+  StyledPasswordToggleButton,
+} from './UncontrolledForm.styled';
+
+type FormErrors = Partial<
+  Record<
+    | 'name'
+    | 'age'
+    | 'email'
+    | 'gender'
+    | 'termsAccepted'
+    | 'password'
+    | 'confirmPassword'
+    | 'country'
+    | 'image',
+    string
+  >
+>;
+
+function UncontrolledForm({ onSuccess }: UncontrolledFormProps) {
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [password, setPassword] = useState('');
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const dispatch = useAppDispatch();
+  const passwordStrength = getPasswordStrength(password);
+
+  const countries = useAppSelector((state) => state.forms.countries);
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+
+    const image = formData.get('image');
+
+    const data = {
+      name: String(formData.get('name') ?? ''),
+      age: Number(formData.get('age')),
+
+      email: String(formData.get('email') ?? ''),
+      gender: String(formData.get('gender') ?? ''),
+      termsAccepted: formData.get('terms') === 'on',
+      password: String(formData.get('password') ?? ''),
+      confirmPassword: String(formData.get('confirmPassword') ?? ''),
+      country: String(formData.get('country') ?? ''),
+      image,
+    };
+
+    const formSchema = createFormSchema(countries);
+    const result = formSchema.safeParse(data);
+
+    if (!result.success) {
+      const fieldErrors: FormErrors = {};
+
+      result.error.issues.forEach((issue) => {
+        const fieldName = issue.path[0] as keyof FormErrors;
+
+        fieldErrors[fieldName] = issue.message;
+      });
+
+      setErrors(fieldErrors);
+      return;
+    }
+
+    setErrors({});
+    const imageBase64 = await imageToBase64(result.data.image);
+
+    dispatch(
+      addSubmission({
+        id: crypto.randomUUID(),
+        name: result.data.name,
+        age: result.data.age,
+        email: result.data.email,
+        gender: result.data.gender,
+        termsAccepted: result.data.termsAccepted,
+        country: result.data.country,
+        password: result.data.password,
+        imageBase64,
+        createdAt: Date.now(),
+        isNew: true,
+      })
+    );
+
+    form.reset();
+    setPassword('');
+    setShowPassword(false);
+    setShowConfirmPassword(false);
+    onSuccess();
+  };
+
+  return (
+    <StyledForm onSubmit={handleSubmit}>
+      <StyledField>
+        <StyledLabel htmlFor="name">Name:</StyledLabel>
+        <StyledInput id="name" name="name" type="text" />
+        <StyledError>{errors.name ?? ''}</StyledError>
+      </StyledField>
+      <StyledField>
+        <StyledLabel htmlFor="age">Age:</StyledLabel>
+        <StyledInput id="age" name="age" type="number" />
+        <StyledError>{errors.age ?? ''}</StyledError>
+      </StyledField>
+      <StyledField>
+        <StyledLabel htmlFor="email">Email:</StyledLabel>
+        <StyledInput id="email" name="email" type="email" />
+        <StyledError>{errors.email ?? ''}</StyledError>
+      </StyledField>
+      <StyledField>
+        <StyledLabel htmlFor="gender">Gender:</StyledLabel>
+        <StyledSelect id="gender" name="gender">
+          <option value="">Select Gender</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+        </StyledSelect>
+        <StyledError>{errors.gender ?? ''}</StyledError>
+      </StyledField>
+
+      <StyledField>
+        <StyledLabel htmlFor="country">Country</StyledLabel>
+        <StyledInput id="country" name="country" type="text" list="countries" />
+        <datalist id="countries">
+          {countries.map((country) => (
+            <option key={country} value={country} />
+          ))}
+        </datalist>
+        <StyledError>{errors.country ?? ''}</StyledError>
+      </StyledField>
+      <StyledField>
+        <StyledPasswordRow>
+          <StyledField>
+            <StyledLabel htmlFor="password">Password</StyledLabel>
+            <StyledPasswordInputWrapper>
+              <StyledInput
+                id="password"
+                name="password"
+                type={showPassword ? 'text' : 'password'}
+                onChange={(event) => setPassword(event.target.value)}
+              />
+
+              <StyledPasswordToggleButton
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+              >
+                {showPassword ? <FiEyeOff /> : <FiEye />}
+              </StyledPasswordToggleButton>
+            </StyledPasswordInputWrapper>
+            <StyledPasswordRules>
+              <StyledPasswordRule $isValid={passwordStrength.hasNumber}>
+                1 number
+              </StyledPasswordRule>
+
+              <StyledPasswordRule $isValid={passwordStrength.hasUpperCase}>
+                1 uppercase
+              </StyledPasswordRule>
+
+              <StyledPasswordRule $isValid={passwordStrength.hasLowerCase}>
+                1 lowercase
+              </StyledPasswordRule>
+
+              <StyledPasswordRule
+                $isValid={passwordStrength.hasSpecialCharacter}
+              >
+                1 special character
+              </StyledPasswordRule>
+            </StyledPasswordRules>
+            <StyledError>{errors.password ?? ''}</StyledError>
+          </StyledField>
+          <StyledField>
+            <StyledLabel htmlFor="confirmPassword">
+              Confirm Password
+            </StyledLabel>
+            <StyledPasswordInputWrapper>
+              <StyledInput
+                id="confirmPassword"
+                name="confirmPassword"
+                type={showConfirmPassword ? 'text' : 'password'}
+              />
+
+              <StyledPasswordToggleButton
+                type="button"
+                onClick={() => setShowConfirmPassword((prev) => !prev)}
+              >
+                {showConfirmPassword ? <FiEyeOff /> : <FiEye />}
+              </StyledPasswordToggleButton>
+            </StyledPasswordInputWrapper>
+            <StyledError>{errors.confirmPassword ?? ''}</StyledError>
+          </StyledField>
+        </StyledPasswordRow>
+      </StyledField>
+      <StyledField>
+        <StyledLabel htmlFor="image">Profile Image:</StyledLabel>
+        <StyledInput
+          id="image"
+          name="image"
+          type="file"
+          accept="image/png, image/jpeg"
+        />
+        <StyledError>{errors.image ?? ''}</StyledError>
+      </StyledField>
+
+      <StyledCheckboxWrapper>
+        <StyledCheckbox id="terms" name="terms" type="checkbox" />
+
+        <StyledLabel htmlFor="terms">Accept Terms and Conditions</StyledLabel>
+      </StyledCheckboxWrapper>
+      <StyledError>{errors.termsAccepted ?? ''}</StyledError>
+
+      <StyledSubmitButton type="submit">Submit</StyledSubmitButton>
+    </StyledForm>
+  );
+}
+export default UncontrolledForm;
