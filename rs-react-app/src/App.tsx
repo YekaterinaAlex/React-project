@@ -1,10 +1,10 @@
 import { useRef, useState } from 'react';
 
 import { useAppSelector } from './store/hooks';
-import SubmissionCard from './components/SubmissionCard/SubmissionCard';
+import SubmissionCard from './components/SubmissionCard';
 import Modal from './components/Modal';
-import UncontrolledForm from './forms/UncontrolledForm/UncontrolledForm';
-import ReactHookForm from './forms/ReactHookForm/ReactHookForm';
+import UncontrolledForm from './forms/UncontrolledForm';
+import ReactHookForm from './forms/ReactHookForm';
 
 import { StyledCards, StyledSubmissions } from './Submissions.styled';
 import { StyledMain, StyledButton } from './App.styled';
