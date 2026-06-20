@@ -1,3 +1,5 @@
+'use client';
+
 import {
   StyledHeader,
   StyledNav,
@@ -14,11 +16,11 @@ function Header() {
     <StyledHeader>
       <StyledNav>
         <StyledLinks>
-          <StyledLink to="/">Home</StyledLink>
-
-          <StyledLink to="/about">About</StyledLink>
+          <StyledLink href="/">Home</StyledLink>
+          <StyledLink href="/about">About</StyledLink>
         </StyledLinks>
-        <StyledButton onClick={toggleTheme}> {theme}</StyledButton>
+
+        <StyledButton onClick={toggleTheme}>{theme}</StyledButton>
       </StyledNav>
     </StyledHeader>
   );

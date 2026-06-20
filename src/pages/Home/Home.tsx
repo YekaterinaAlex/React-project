@@ -1,13 +1,9 @@
+'use client';
 import { useEffect, useState } from 'react';
-import {
-  Outlet,
-  useNavigate,
-  useSearchParams,
-  useLocation,
-} from 'react-router-dom';
 
 import { toggleItem, clearSelectedItems } from '../../store/selectedItemsSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import Pagination from '../../components/Pagination';
 import CardList from '../../components/CardList';
@@ -27,7 +23,6 @@ import {
   Layout,
   ErrorButtonWrapper,
   ErrorButton,
-  DetailsSection,
 } from './Home.styled';
 
 import {
@@ -59,22 +54,18 @@ function Home() {
   const handleDownload = () => {
     downloadCSV(selectedItems);
   };
-  const [searchParams, setSearchParams] = useSearchParams();
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
-    const currentPage = searchParams.get('page');
+    const currentPage = searchParams?.get('page');
 
     if (!currentPage) {
-      setSearchParams({ page: '1' });
+      router.push('/?page=1');
     }
-  }, [searchParams, setSearchParams]);
-  const navigate = useNavigate();
+  }, [searchParams, router]);
 
-  const location = useLocation();
-
-  const showDetails = location.pathname.includes('/pokemon/');
-
-  const page = Number(searchParams.get('page')) || 1;
+  const page = Number(searchParams?.get('page')) || 1;
 
   const trimmedSearch = searchTerm.trim().toLowerCase();
 
@@ -122,29 +113,21 @@ function Home() {
       })) ?? []);
 
   const hasNextPage = Boolean(listData?.next);
-  const handleCloseDetails = () => {
-    navigate(`/?page=${page}`);
-  };
+
   const handleTestError = () => {
     setHasTestError(true);
   };
-
   const handlePageChange = (newPage: number) => {
-    setSearchParams({
-      page: String(newPage),
-    });
+    router.push(`/?page=${newPage}`);
   };
 
   const handleItemClick = (name: string) => {
-    navigate(`/pokemon/${name}?page=${page}`);
+    router.push(`/pokemon/${name}?page=${page}`);
   };
 
   const handleUserSearch = (value: string) => {
     setSearchTerm(value);
-
-    setSearchParams({
-      page: '1',
-    });
+    router.push('/?page=1');
   };
 
   if (hasTestError) {
@@ -185,14 +168,6 @@ function Home() {
               </>
             )}
           </ResultSection>
-
-          {showDetails && (
-            <DetailsSection>
-              <Outlet />
-
-              <ErrorButton onClick={handleCloseDetails}>Close</ErrorButton>
-            </DetailsSection>
-          )}
         </Layout>
         <Flyout
           items={selectedItems}
