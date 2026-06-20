@@ -1,15 +1,28 @@
-import './globals.css';
+import { NextIntlClientProvider } from 'next-intl';
+import { getLocale, getMessages } from 'next-intl/server';
+
+import Header from '../components/Header';
 import { Providers } from './providers';
 
-export default function RootLayout({
+import './globals.css';
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+
   return (
-    <html lang="en">
+    <html lang={locale}>
       <body>
-        <Providers>{children}</Providers>
+        <NextIntlClientProvider messages={messages}>
+          <Providers>
+            <Header />
+            {children}
+          </Providers>
+        </NextIntlClientProvider>
       </body>
     </html>
   );
