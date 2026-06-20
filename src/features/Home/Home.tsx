@@ -32,8 +32,14 @@ import {
 } from '../../store/api/pokemonApi';
 
 import useLocalStorage from '../../hooks/useLocalStorage';
+import type { PokemonListResponse } from './home.type';
 
-function Home() {
+type HomeProps = {
+  initialData?: PokemonListResponse;
+  initialPage?: number;
+};
+
+function Home({ initialData, initialPage }: HomeProps) {
   const [hasTestError, setHasTestError] = useState(false);
   const { storedValue: searchTerm, setValue: setSearchTerm } = useLocalStorage(
     'searchTerm',
@@ -65,16 +71,16 @@ function Home() {
     }
   }, [searchParams, router]);
 
-  const page = Number(searchParams?.get('page')) || 1;
+  const page = Number(searchParams?.get('page')) || initialPage || 1;
 
   const trimmedSearch = searchTerm.trim().toLowerCase();
 
   const {
-    data: listData,
+    data: listData = initialData,
     isLoading: isListLoading,
     error: listError,
   } = useGetPokemonListQuery(page, {
-    skip: Boolean(trimmedSearch),
+    skip: Boolean(trimmedSearch) || Boolean(initialData),
   });
   const {
     data: pokemonData,
