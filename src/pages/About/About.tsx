@@ -1,4 +1,4 @@
-import { StyledAboutPage, StyledLink } from './About.styled';
+import { StyledAboutPage, StyledLink } from '../../app/about/About.styled';
 
 function About() {
   return (
