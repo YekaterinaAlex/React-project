@@ -1,4 +1,8 @@
-import { StyledNotFound, StyledTitle, StyledLink } from './NotFound.styled';
+import {
+  StyledNotFound,
+  StyledTitle,
+  StyledLink,
+} from '../../app/NotFound.styled';
 
 function NotFound() {
   return (
