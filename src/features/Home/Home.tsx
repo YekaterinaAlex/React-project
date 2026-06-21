@@ -11,7 +11,7 @@ import Search from '../../components/Search';
 import ErrorBoundary from '../../components/ErrorBoundary';
 import Bug from '../../components/Bug';
 import Flyout from '../../components/Flyout';
-import { downloadCSV } from '../../utils/downloadCSV';
+
 import Spinner from '../../components/Spinner';
 
 import type { Item } from './home.type';
@@ -57,8 +57,24 @@ function Home({ initialData, initialPage }: HomeProps) {
     dispatch(clearSelectedItems());
   };
 
-  const handleDownload = () => {
-    downloadCSV(selectedItems);
+  const handleDownload = async () => {
+    const response = await fetch('/api/csv', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(selectedItems),
+    });
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'selected-pokemon.csv';
+    link.click();
+
+    window.URL.revokeObjectURL(url);
   };
   const router = useRouter();
   const searchParams = useSearchParams();
