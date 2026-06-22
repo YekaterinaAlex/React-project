@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Link } from '../../i18n/navigation';
+import Link from 'next/link';
 
 export const StyledHeader = styled.header`
   background-color: ${({ theme }) => theme.cardBackground};
