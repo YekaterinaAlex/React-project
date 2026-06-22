@@ -1,13 +1,9 @@
+'use client';
 import { useEffect, useState } from 'react';
-import {
-  Outlet,
-  useNavigate,
-  useSearchParams,
-  useLocation,
-} from 'react-router-dom';
 
 import { toggleItem, clearSelectedItems } from '../../store/selectedItemsSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import Pagination from '../../components/Pagination';
 import CardList from '../../components/CardList';
@@ -15,7 +11,7 @@ import Search from '../../components/Search';
 import ErrorBoundary from '../../components/ErrorBoundary';
 import Bug from '../../components/Bug';
 import Flyout from '../../components/Flyout';
-import { downloadCSV } from '../../utils/downloadCSV';
+
 import Spinner from '../../components/Spinner';
 
 import type { Item } from './home.type';
@@ -27,7 +23,6 @@ import {
   Layout,
   ErrorButtonWrapper,
   ErrorButton,
-  DetailsSection,
 } from './Home.styled';
 
 import {
@@ -36,14 +31,15 @@ import {
   useGetPokemonByNameQuery,
 } from '../../store/api/pokemonApi';
 
-import useLocalStorage from '../../hooks/useLocalStorage';
+import type { PokemonListResponse } from './home.type';
 
-function Home() {
+type HomeProps = {
+  initialData?: PokemonListResponse;
+  initialPage?: number;
+};
+
+function Home({ initialData, initialPage }: HomeProps) {
   const [hasTestError, setHasTestError] = useState(false);
-  const { storedValue: searchTerm, setValue: setSearchTerm } = useLocalStorage(
-    'searchTerm',
-    ''
-  );
 
   const dispatch = useAppDispatch();
   const selectedItems = useAppSelector((state) => state.selectedItems.items);
@@ -56,34 +52,46 @@ function Home() {
     dispatch(clearSelectedItems());
   };
 
-  const handleDownload = () => {
-    downloadCSV(selectedItems);
+  const handleDownload = async () => {
+    const response = await fetch('/api/csv', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(selectedItems),
+    });
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'selected-pokemon.csv';
+    link.click();
+
+    window.URL.revokeObjectURL(url);
   };
-  const [searchParams, setSearchParams] = useSearchParams();
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
-    const currentPage = searchParams.get('page');
+    const currentPage = searchParams?.get('page');
 
     if (!currentPage) {
-      setSearchParams({ page: '1' });
+      router.push('/?page=1');
     }
-  }, [searchParams, setSearchParams]);
-  const navigate = useNavigate();
+  }, [searchParams, router]);
 
-  const location = useLocation();
-
-  const showDetails = location.pathname.includes('/pokemon/');
-
-  const page = Number(searchParams.get('page')) || 1;
-
-  const trimmedSearch = searchTerm.trim().toLowerCase();
+  const page = Number(searchParams?.get('page')) || initialPage || 1;
+  const searchFromUrl = searchParams?.get('search') ?? '';
+  const trimmedSearch = searchFromUrl.trim().toLowerCase();
 
   const {
-    data: listData,
+    data: listData = initialData,
     isLoading: isListLoading,
     error: listError,
   } = useGetPokemonListQuery(page, {
-    skip: Boolean(trimmedSearch),
+    skip: Boolean(trimmedSearch) || Boolean(initialData),
   });
   const {
     data: pokemonData,
@@ -122,29 +130,16 @@ function Home() {
       })) ?? []);
 
   const hasNextPage = Boolean(listData?.next);
-  const handleCloseDetails = () => {
-    navigate(`/?page=${page}`);
-  };
+
   const handleTestError = () => {
     setHasTestError(true);
   };
-
   const handlePageChange = (newPage: number) => {
-    setSearchParams({
-      page: String(newPage),
-    });
+    router.push(`/?page=${newPage}`);
   };
 
   const handleItemClick = (name: string) => {
-    navigate(`/pokemon/${name}?page=${page}`);
-  };
-
-  const handleUserSearch = (value: string) => {
-    setSearchTerm(value);
-
-    setSearchParams({
-      page: '1',
-    });
+    router.push(`/pokemon/${name}?page=${page}`);
   };
 
   if (hasTestError) {
@@ -157,7 +152,7 @@ function Home() {
 
       <AppWrapper>
         <SearchSection>
-          <Search onSearch={handleUserSearch} value={searchTerm} />
+          <Search value={searchFromUrl} />
         </SearchSection>
 
         <Layout>
@@ -185,14 +180,6 @@ function Home() {
               </>
             )}
           </ResultSection>
-
-          {showDetails && (
-            <DetailsSection>
-              <Outlet />
-
-              <ErrorButton onClick={handleCloseDetails}>Close</ErrorButton>
-            </DetailsSection>
-          )}
         </Layout>
         <Flyout
           items={selectedItems}

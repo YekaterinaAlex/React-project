@@ -1,4 +1,4 @@
-import type { Item } from '../../pages/Home/home.type';
+import type { Item } from '../../features/Home/home.type';
 
 export interface FlyoutProps {
   items: Item[];

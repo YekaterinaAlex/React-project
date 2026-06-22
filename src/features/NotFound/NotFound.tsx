@@ -7,7 +7,7 @@ function NotFound() {
 
       <p>Page not found</p>
 
-      <StyledLink to="/">Go back</StyledLink>
+      <StyledLink href="/">Go back</StyledLink>
     </StyledNotFound>
   );
 }

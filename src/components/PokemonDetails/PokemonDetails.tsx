@@ -1,4 +1,7 @@
-import { useParams } from 'react-router-dom';
+'use client';
+
+import Image from 'next/image';
+import { useParams } from 'next/navigation';
 
 import {
   StyledContainer,
@@ -8,14 +11,16 @@ import {
 } from './PokemonDetails.styled';
 
 import Spinner from '../Spinner';
-
-import { useGetPokemonByNameQuery } from '../../store/api/pokemonApi';
-
-import { pokemonApi } from '../../store/api/pokemonApi';
+import {
+  pokemonApi,
+  useGetPokemonByNameQuery,
+} from '../../store/api/pokemonApi';
 import { useAppDispatch } from '../../store/hooks';
 
 function PokemonDetails() {
-  const { name } = useParams();
+  const params = useParams<{ name: string }>();
+  const name = params?.name;
+
   const dispatch = useAppDispatch();
 
   const {
@@ -42,13 +47,11 @@ function PokemonDetails() {
     <StyledContainer>
       <StyledRefreshButton
         onClick={() => {
-          if (name) {
-            dispatch(
-              pokemonApi.util.invalidateTags([
-                { type: 'PokemonDetails', id: name },
-              ])
-            );
-          }
+          dispatch(
+            pokemonApi.util.invalidateTags([
+              { type: 'PokemonDetails', id: name },
+            ])
+          );
         }}
       >
         Refresh details
@@ -57,7 +60,12 @@ function PokemonDetails() {
       <StyledTitle>{details.name}</StyledTitle>
 
       {details.sprites.front_default && (
-        <img src={details.sprites.front_default} alt={details.name} />
+        <Image
+          src={details.sprites.front_default}
+          alt={details.name}
+          width={96}
+          height={96}
+        />
       )}
 
       <StyledText>Height: {details.height}</StyledText>

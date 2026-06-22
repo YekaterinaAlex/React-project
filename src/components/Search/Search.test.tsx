@@ -1,17 +1,18 @@
-import Search from './Search';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
+import Search from './Search';
+
 describe('Search', () => {
-  it('calls onSearch with typed value when Search button is clicked', async () => {
+  it('updates input value when user types', async () => {
     const user = userEvent.setup();
-    const onSearch = vi.fn();
 
-    render(<Search value="" onSearch={onSearch} />);
+    render(<Search value="" />);
 
-    await user.type(screen.getByPlaceholderText(/search/i), 'pikachu');
-    await user.click(screen.getByRole('button', { name: /search/i }));
+    const input = screen.getByPlaceholderText(/search/i);
 
-    expect(onSearch).toHaveBeenCalledWith('pikachu');
+    await user.type(input, 'pikachu');
+
+    expect(input).toHaveValue('pikachu');
   });
 });

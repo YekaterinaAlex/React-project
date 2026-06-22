@@ -1,4 +1,4 @@
-import type { Item } from '../pages/Home/home.type';
+import type { Item } from '../features/Home/home.type';
 
 export const downloadCSV = (items: Item[]) => {
   const header = ['name', 'URL'];

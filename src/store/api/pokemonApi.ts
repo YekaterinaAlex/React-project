@@ -5,7 +5,7 @@ import { API_URL, CACHE_TTL_SECONDS, PAGE_SIZE } from '../../config/config';
 import type {
   PokemonListResponse,
   PokemonDetailsResponse,
-} from '../../pages/Home/home.type';
+} from '../../features/Home/home.type';
 
 export const pokemonApi = createApi({
   reducerPath: 'pokemonApi',

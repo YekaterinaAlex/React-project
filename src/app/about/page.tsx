@@ -1,6 +1,6 @@
 import { StyledAboutPage, StyledLink } from './About.styled';
 
-function About() {
+export default function AboutPage() {
   return (
     <StyledAboutPage>
       <h1>About page</h1>
@@ -17,4 +17,3 @@ function About() {
     </StyledAboutPage>
   );
 }
-export default About;

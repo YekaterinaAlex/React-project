@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react';
-import About from './About';
+import AboutPage from './page';
 describe('About', () => {
   it('renders About page', () => {
-    render(<About />);
+    render(<AboutPage />);
     expect(screen.getByText(/about/i)).toBeInTheDocument();
   });
 });

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 
 export const StyledNotFound = styled.div`
   padding: 60px;

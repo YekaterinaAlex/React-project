@@ -25,3 +25,7 @@ dist-ssr
 *.sln
 *.sw?
 coverage
+
+# Next
+.next/
+out/
