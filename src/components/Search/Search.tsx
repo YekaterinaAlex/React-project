@@ -8,37 +8,25 @@ import {
 
 import type { SearchProps } from './search.type';
 
-function Search({ onSearch, value }: SearchProps) {
+function Search({ value }: SearchProps) {
   const [inputValue, setInputValue] = useState(value);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
-  };
-
-  const handleSearchClick = () => {
-    onSearch(inputValue);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      onSearch(inputValue);
-    }
-  };
-
   return (
-    <StyledSearchContainer>
-      <StyledSearchInput
-        type="text"
-        placeholder="Search..."
-        value={inputValue}
-        onChange={handleChange}
-        onKeyDown={handleKeyDown}
-      />
+    <form action="/" method="GET">
+      <StyledSearchContainer>
+        <StyledSearchInput
+          name="search"
+          type="text"
+          placeholder="Search..."
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+        />
 
-      <StyledSearchButton onClick={handleSearchClick}>
-        Search
-      </StyledSearchButton>
-    </StyledSearchContainer>
+        <input type="hidden" name="page" value="1" />
+
+        <StyledSearchButton type="submit">Search</StyledSearchButton>
+      </StyledSearchContainer>
+    </form>
   );
 }
 

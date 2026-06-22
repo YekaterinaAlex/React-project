@@ -31,7 +31,6 @@ import {
   useGetPokemonByNameQuery,
 } from '../../store/api/pokemonApi';
 
-import useLocalStorage from '../../hooks/useLocalStorage';
 import type { PokemonListResponse } from './home.type';
 
 type HomeProps = {
@@ -41,10 +40,6 @@ type HomeProps = {
 
 function Home({ initialData, initialPage }: HomeProps) {
   const [hasTestError, setHasTestError] = useState(false);
-  const { storedValue: searchTerm, setValue: setSearchTerm } = useLocalStorage(
-    'searchTerm',
-    ''
-  );
 
   const dispatch = useAppDispatch();
   const selectedItems = useAppSelector((state) => state.selectedItems.items);
@@ -88,8 +83,8 @@ function Home({ initialData, initialPage }: HomeProps) {
   }, [searchParams, router]);
 
   const page = Number(searchParams?.get('page')) || initialPage || 1;
-
-  const trimmedSearch = searchTerm.trim().toLowerCase();
+  const searchFromUrl = searchParams?.get('search') ?? '';
+  const trimmedSearch = searchFromUrl.trim().toLowerCase();
 
   const {
     data: listData = initialData,
@@ -147,11 +142,6 @@ function Home({ initialData, initialPage }: HomeProps) {
     router.push(`/pokemon/${name}?page=${page}`);
   };
 
-  const handleUserSearch = (value: string) => {
-    setSearchTerm(value);
-    router.push('/?page=1');
-  };
-
   if (hasTestError) {
     throw new Error('Test error');
   }
@@ -162,7 +152,7 @@ function Home({ initialData, initialPage }: HomeProps) {
 
       <AppWrapper>
         <SearchSection>
-          <Search onSearch={handleUserSearch} value={searchTerm} />
+          <Search value={searchFromUrl} />
         </SearchSection>
 
         <Layout>
